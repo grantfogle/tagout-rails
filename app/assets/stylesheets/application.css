@@ -13,3 +13,13 @@
  *= require_tree .
  *= require_self
  */
+/* Abstracts */
+@import "abstracts/typography";
+@import "abstracts/colors";
+@import "abstracts/functions";
+
+/* Theme */
+@import "themes/default";
+
+/* Base styles */
+@import "base/typography";
