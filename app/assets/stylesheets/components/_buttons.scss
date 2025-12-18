@@ -34,12 +34,21 @@
   &--primary {
     background: $color-primary;
     color: $text-inverse;
-    color: black;
+    // color: black;
+  }
+
+  &--full {
+    width: 100%;
   }
 
   &--secondary {
     background: $bg-surface;
     color: $text-primary;
     border: 1px solid $border-default;
+  }
+
+  &--tertiary {
+    color: $color-accent;
+    font-size: 14px;
   }
 }

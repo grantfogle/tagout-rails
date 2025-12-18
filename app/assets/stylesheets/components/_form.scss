@@ -12,19 +12,22 @@
   &__field {
     margin-bottom: 1rem;
     text-align: left;
+    width: 100%;
+
+
+      input {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid $border-default;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
   }
 
   label {
     display: block;
     font-size: $font-size-sm;
     margin-bottom: 0.25rem;
-  }
-
-  input {
-    width: 100%;
-    padding: 0.5rem 0.75rem;
-    border: 1px solid $border-default;
-    border-radius: 6px;
   }
 
   &__actions {

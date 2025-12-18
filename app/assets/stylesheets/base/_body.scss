@@ -1,7 +1,18 @@
-// base/_body.scss
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
 body {
 //   font-family: $font-base;
 //   color: $color-text;
 //   background-color: $color-background;
+    margin: 0;
   line-height: 1.5;
 }
