@@ -1,0 +1,8 @@
+// layout/_grid.scss
+.grid {
+  display: grid;
+//   gap: $space-4;
+
+  &--2 { grid-template-columns: repeat(2, 1fr); }
+  &--3 { grid-template-columns: repeat(3, 1fr); }
+}

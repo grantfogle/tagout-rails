@@ -1,5 +1,7 @@
+@import '../abstracts/functions';
+@import '../abstracts/colors';
 // Brand
-$color-primary: color(orange, 500);
+$color-primary: color(lime-green, 500);
 $color-primary-hover: color(orange, 600);
 $color-accent: color(lime-green, 500);
 
@@ -15,3 +17,4 @@ $text-inverse: #ffffff;
 // States
 $color-success: color(lime-green, 600);
 $color-danger: color(red, 500);
+$border-default: color(grey, 900);

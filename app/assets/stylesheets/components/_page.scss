@@ -1,0 +1,28 @@
+@import "../abstracts/typography";
+@import "../themes/default";
+
+.page {
+  min-height: 100vh;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  padding: 2rem;
+  background: $bg-page;
+
+  &__header {
+    margin-bottom: 2rem;
+  }
+
+  &__subtitle {
+    font-size: $font-size-lg;
+    color: $text-secondary;
+    max-width: 32rem;
+    margin: 0 auto;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+  }
+}
