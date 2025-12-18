@@ -1,0 +1,19 @@
+<div class="page">
+  <header class="page__header">
+    <h1>Tagout</h1>
+    <p class="page__subtitle">
+      Find more hunts.
+    </p>
+  </header>
+
+  <section class="page__actions">
+    <div class="card">
+        <% if user_signed_in? %>
+            <%= link_to "Dashboard", root_path, class: "button button--primary" %>
+        <% else %>
+            <%= link_to "Sign up", new_user_registration_path, class: "button button--primary button--contained" %>
+            <%= link_to "Sign in", new_user_session_path, class: "button button--secondary" %>
+        <% end %>
+    </div>
+  </section>
+</div>
