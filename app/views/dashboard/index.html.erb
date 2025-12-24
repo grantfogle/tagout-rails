@@ -1,24 +1,21 @@
 <div class="page">
     <h1>Dashboard</h1>
 
-    <%= form_with url: dashboard_path, method: :get, scope: :filters, local: true do |f| %>
-        <div>
-            <%= f.label :species %><br>
+    <%= form_with url: dashboard_path, class: 'form form__inline', method: :get, scope: :filters, local: true do |f| %>
+        <div class="form__field">
             <%= f.select :species,
                 options_for_select(HuntStat::SPECIES_OPTIONS, @filters[:species]),
                 { include_blank: "Any species" } %>
         </div>
 
-    <div>
-        <%= f.label :sex %><br>
-            <%= f.select :sex,
-            options_for_select(HuntStat::SEX_OPTIONS, @filters[:sex]),
-            { include_blank: "Any sex" } %>
+    <div class="form__field">
+        <%= f.select :sex,
+        options_for_select(HuntStat::SEX_OPTIONS, @filters[:sex]),
+        { include_blank: "Any sex" } %>
     </div>
 
 
-  <div>
-    <%= f.label :hunt_method %><br>
+  <div class="form__field">
         <%= f.select :hunt_method,
         options_for_select(HuntStat::METHOD_OPTIONS, @filters[:hunt_method]),
         { include_blank: "Any method" } %>
@@ -32,22 +29,19 @@
 <% end %>
 
 
-
-
-    <% @hunt_results_by_code.each do |hunt_code, rows| %>
-        <h3><%= hunt_code %></h3>
-        <table>
-            <thead><tr><th>Value</th><th>Res</th><th>Applicants</th><th>Success</th></tr></thead>
+    <section class="results-table-container">
+        <table class="results-table">
             <tbody>
-            <% rows.each do |r| %>
+            <% @hunt_results_by_code.each do |hunt_code, columns| %>
                 <tr>
-                <td><%= r[:value] %></td>
-                <td><%= r[:resident] ? "Res" : "NR" %></td>
-                <td><%= r[:applicants] %></td>
-                <td><%= r[:success] %></td>
+                <td class="sticky-col"><%= hunt_code %></td>
+
+                <% columns.each do |c| %>
+                    <td><%= c[:success] %> / <%= c[:applicants] %></td>
+                <% end %>
                 </tr>
             <% end %>
             </tbody>
         </table>
-    <% end %>
+    </section>
 </div>

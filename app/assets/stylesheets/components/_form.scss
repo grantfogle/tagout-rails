@@ -2,12 +2,20 @@
 @import "../themes/default";
 
 .form {
-  max-width: 24rem;
+//   max-width: 24rem;
+    width: 100%;
   margin: 2rem auto;
   padding: 2rem;
   background: $bg-surface;
   border: 1px solid $border-default;
   border-radius: 12px;
+
+  &__inline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
 
   &__field {
     margin-bottom: 1rem;
@@ -22,6 +30,12 @@
             border-radius: 6px;
             font-size: 1rem;
         }
+
+    select {
+        min-width: 120px;
+        height: 40px;
+        padding: 12px 8px 12px 12px;
+    }
   }
 
   label {
@@ -35,9 +49,3 @@
   }
 }
 
-.inline-form {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-}

@@ -1,3 +1,38 @@
 // Place all the styles related to the Dashboard controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: https://sass-lang.com/
+
+.results-table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; // smoother on iOS
+    border: 1px solid rgba(0,0,0,0.12);
+    border-radius: 12px;
+}
+
+.results-table {
+  width: max-content;          // table can grow wider than container
+//   min-width: 100%;
+    max-width: 800px;             // but at least fill the container
+  border-collapse: collapse;
+  table-layout: auto;          // don't force equal-width columns
+
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    white-space: nowrap;       // prevents wrapping/smushing
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+/* Optional: keep hunt_code pinned while scrolling horizontally */
+.sticky-col {
+  position: sticky;
+  left: 0;
+  background: white;
+  border-right: 1px solid rgba(0,0,0,0.08);
+  font-weight: 600;
+}
