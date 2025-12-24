@@ -1,2 +1,53 @@
-<h1>Dashboard#index</h1>
-<p>Find me in app/views/dashboard/index.html.erb</p>
+<div class="page">
+    <h1>Dashboard</h1>
+
+    <%= form_with url: dashboard_path, method: :get, scope: :filters, local: true do |f| %>
+        <div>
+            <%= f.label :species %><br>
+            <%= f.select :species,
+                options_for_select(HuntStat::SPECIES_OPTIONS, @filters[:species]),
+                { include_blank: "Any species" } %>
+        </div>
+
+    <div>
+        <%= f.label :sex %><br>
+            <%= f.select :sex,
+            options_for_select(HuntStat::SEX_OPTIONS, @filters[:sex]),
+            { include_blank: "Any sex" } %>
+    </div>
+
+
+  <div>
+    <%= f.label :hunt_method %><br>
+        <%= f.select :hunt_method,
+        options_for_select(HuntStat::METHOD_OPTIONS, @filters[:hunt_method]),
+        { include_blank: "Any method" } %>
+  </div>
+
+
+  <div style="margin-top: 12px;">
+    <%= f.submit "Filter" %>
+    <%= link_to "Clear", dashboard_path %>
+  </div>
+<% end %>
+
+
+
+
+    <% @hunt_results_by_code.each do |hunt_code, rows| %>
+        <h3><%= hunt_code %></h3>
+        <table>
+            <thead><tr><th>Value</th><th>Res</th><th>Applicants</th><th>Success</th></tr></thead>
+            <tbody>
+            <% rows.each do |r| %>
+                <tr>
+                <td><%= r[:value] %></td>
+                <td><%= r[:resident] ? "Res" : "NR" %></td>
+                <td><%= r[:applicants] %></td>
+                <td><%= r[:success] %></td>
+                </tr>
+            <% end %>
+            </tbody>
+        </table>
+    <% end %>
+</div>

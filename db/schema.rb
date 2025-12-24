@@ -10,10 +10,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_12_12_032336) do
+ActiveRecord::Schema.define(version: 2025_12_24_025337) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "hunt_stats", force: :cascade do |t|
+    t.string "hunt_code"
+    t.string "state"
+    t.string "species"
+    t.string "sex"
+    t.string "unit"
+    t.string "season"
+    t.string "hunt_method"
+    t.boolean "resident"
+    t.boolean "adult"
+    t.string "draw_type"
+    t.integer "value"
+    t.integer "applicants"
+    t.integer "success"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["hunt_code", "resident", "adult", "draw_type", "value"], name: "index_hunt_stats_unique_key", unique: true
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false

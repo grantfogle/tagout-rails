@@ -34,3 +34,10 @@
     margin-top: 1.5rem;
   }
 }
+
+.inline-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
