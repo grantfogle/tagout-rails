@@ -5,6 +5,43 @@ class HuntStatsService
     @scope = scope
   end
 
+  # Returns draw results structured for display:
+  # {
+  #   "EE001E1R" => {
+  #     max_points: 30,
+  #     resident: { pref: { 30 => {applicants:, success:, odds:}, ...}, choice: { 2 => {...}, 3 => {...}, 4 => {...} } },
+  #     nonresident: { pref: { 30 => {...}, ...}, choice: { 2 => {...}, ... } }
+  #   }
+  # }
+  def draw_results_by_code(filters: {})
+    q = apply_filters(@scope, filters)
+
+    rows = q
+      .select(:hunt_code, :value, :resident, :adult, :draw_type, :applicants, :success)
+      .order(hunt_code: :asc, value: :desc)
+      .to_a
+
+    grouped = rows.group_by(&:hunt_code)
+    
+    result = {}
+    
+    grouped.each do |hunt_code, records|
+      pref_records = records.select { |r| r.draw_type == "pref" }
+      choice_records = records.select { |r| r.draw_type == "total_choice" }
+      
+      max_points = pref_records.map(&:value).max || 0
+      
+      result[hunt_code] = {
+        max_points: max_points,
+        resident: build_residency_data(pref_records.select(&:resident), choice_records.select(&:resident)),
+        nonresident: build_residency_data(pref_records.reject(&:resident), choice_records.reject(&:resident))
+      }
+    end
+    
+    result
+  end
+
+  # Legacy method for backwards compatibility
   def grouped_draw_results(limit_per_code: DEFAULT_LIMIT_PER_CODE, filters: {})
     q = apply_filters(@scope, filters)
 
@@ -30,6 +67,34 @@ class HuntStatsService
   end
 
   private
+
+  def build_residency_data(pref_records, choice_records)
+    pref_data = {}
+    choice_data = {}
+    
+    # Build preference point data (descending order)
+    pref_records.sort_by { |r| -r.value }.each do |r|
+      odds = r.applicants > 0 ? (r.success.to_f / r.applicants * 100).round(1) : nil
+      pref_data[r.value] = {
+        applicants: r.applicants,
+        success: r.success,
+        odds: odds
+      }
+    end
+    
+    # Build choice data (2nd, 3rd, 4th choice)
+    choice_records.each do |r|
+      next if r.value == 1 # Skip 1st choice as that's the primary preference draw
+      odds = r.applicants > 0 ? (r.success.to_f / r.applicants * 100).round(1) : nil
+      choice_data[r.value] = {
+        applicants: r.applicants,
+        success: r.success,
+        odds: odds
+      }
+    end
+    
+    { pref: pref_data, choice: choice_data }
+  end
 
   def apply_filters(q, filters)
     q = q.where(state: filters[:state]) if filters[:state].present?

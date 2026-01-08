@@ -2,37 +2,248 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: https://sass-lang.com/
 
+@import "abstracts/functions";
+@import "abstracts/colors";
+@import "themes/default";
+
+.dashboard {
+    background-color: $bg-page;
+    padding: 2rem;
+    min-height: 100vh;
+
+    h1 {
+        color: $text-primary;
+        margin-bottom: 1.5rem;
+        font-size: 1.75rem;
+        font-weight: 700;
+    }
+}
+
+// Filter section
+.form__inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+    margin-bottom: 2rem;
+    padding: 1.25rem;
+    background: $bg-surface;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+// Draw results section
+.draw-results {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+// Hunt card container
+.hunt-card {
+    background: $bg-surface;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+
+    &__header {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid color(grey, 100);
+        background: linear-gradient(135deg, color(grey, 050) 0%, $bg-surface 100%);
+    }
+
+    &__title {
+        margin: 0;
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: $text-primary;
+        letter-spacing: 0.5px;
+    }
+}
+
+// Table container with horizontal scroll
 .results-table-container {
     width: 100%;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch; // smoother on iOS
-    border: 1px solid rgba(0,0,0,0.12);
-    border-radius: 12px;
+    -webkit-overflow-scrolling: touch;
 }
 
-.results-table {
-  width: max-content;          // table can grow wider than container
-//   min-width: 100%;
-    max-width: 800px;             // but at least fill the container
-  border-collapse: collapse;
-  table-layout: auto;          // don't force equal-width columns
+// Draw results table
+.draw-table {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
 
-  td {
-    padding: 10px 12px;
-    border-bottom: 1px solid rgba(0,0,0,0.08);
-    white-space: nowrap;       // prevents wrapping/smushing
-  }
+    thead {
+        background: color(grey, 050);
 
-  tr:last-child td {
-    border-bottom: none;
-  }
+        th {
+            padding: 0.75rem 0.5rem;
+            font-weight: 600;
+            color: $text-secondary;
+            text-align: center;
+            white-space: nowrap;
+            border-bottom: 2px solid color(grey, 200);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .point-header {
+            min-width: 60px;
+        }
+
+        .choice-header {
+            min-width: 60px;
+            background: color(orange, 050);
+            color: color(orange, 700);
+        }
+    }
+
+    tbody {
+        tr {
+            &:hover {
+                background: rgba(0, 0, 0, 0.02);
+            }
+        }
+
+        .resident-row {
+            border-bottom: 1px solid color(grey, 100);
+        }
+
+        .nonresident-row {
+            background: color(grey, 050);
+        }
+    }
+
+    td, th {
+        padding: 0.625rem 0.5rem;
+        white-space: nowrap;
+    }
 }
 
-/* Optional: keep hunt_code pinned while scrolling horizontally */
+// Sticky first column
 .sticky-col {
-  position: sticky;
-  left: 0;
-  background: white;
-  border-right: 1px solid rgba(0,0,0,0.08);
-  font-weight: 600;
+    position: sticky;
+    left: 0;
+    z-index: 10;
+    background: $bg-surface;
+    border-right: 2px solid color(grey, 200);
+    min-width: 70px;
+
+    thead & {
+        background: color(grey, 050);
+    }
+
+    .nonresident-row & {
+        background: color(grey, 050);
+    }
+}
+
+// Status cell with badge
+.status-cell {
+    text-align: center;
+    padding: 0.5rem 0.75rem !important;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+
+    &--resident {
+        background: color(lime-green, 100);
+        color: color(lime-green, 700);
+    }
+
+    &--nonresident {
+        background: color(orange, 100);
+        color: color(orange, 700);
+    }
+}
+
+// Draw cell styling
+.draw-cell {
+    text-align: center;
+    vertical-align: middle;
+    transition: background-color 0.15s ease;
+
+    &__odds {
+        font-weight: 700;
+        font-size: 0.875rem;
+        color: $text-primary;
+        line-height: 1.2;
+    }
+
+    &__ratio {
+        font-size: 0.625rem;
+        color: $text-secondary;
+        margin-top: 2px;
+    }
+
+    &__empty {
+        color: color(grey, 300);
+        font-size: 0.875rem;
+    }
+
+    // Color coding based on draw odds
+    &--guaranteed {
+        background: color(lime-green, 100);
+        
+        .draw-cell__odds {
+            color: color(lime-green, 700);
+        }
+    }
+
+    &--high {
+        background: color(lime-green, 050);
+        
+        .draw-cell__odds {
+            color: color(lime-green, 600);
+        }
+    }
+
+    &--low {
+        background: color(orange, 050);
+        
+        .draw-cell__odds {
+            color: color(orange, 600);
+        }
+    }
+
+    &--none {
+        .draw-cell__odds {
+            color: color(grey, 500);
+        }
+    }
+
+    &--empty {
+        background: transparent;
+    }
+}
+
+// Choice columns separator
+.choice-cell {
+    border-left: 2px solid color(orange, 200);
+
+    &:first-of-type {
+        border-left-width: 3px;
+    }
+}
+
+// Empty state
+.empty-state {
+    padding: 3rem;
+    text-align: center;
+    background: $bg-surface;
+    border-radius: 12px;
+    
+    p {
+        color: $text-secondary;
+        margin: 0;
+    }
 }

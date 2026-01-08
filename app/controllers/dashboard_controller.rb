@@ -8,10 +8,10 @@ class DashboardController < ApplicationController
     @filters[:resident] = cast_bool(@filters[:resident])
     @filters[:adult]    = cast_bool(@filters[:adult])
 
-    @hunt_results_by_code = HuntStatsService.new.grouped_draw_results(
-      limit_per_code: (params[:limit_per_code].presence || 50).to_i,
-      filters: @filters
-    )
+    @draw_results = HuntStatsService.new.draw_results_by_code(filters: @filters)
+    
+    # Calculate the global max points across all hunt codes for consistent column headers
+    @max_points = @draw_results.values.map { |v| v[:max_points] }.max || 0
   end
 
   private
