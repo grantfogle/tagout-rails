@@ -1,22 +1,32 @@
 class HuntStatsService
   DEFAULT_LIMIT_PER_CODE = 50
+  DEFAULT_PAGE_SIZE = 20
 
   def initialize(scope: HuntStat.all)
     @scope = scope
   end
 
-  # Returns draw results structured for display:
+  # Returns draw results structured for display with pagination info:
   # {
-  #   "EE001E1R" => {
-  #     max_points: 30,
-  #     resident: { pref: { 30 => {applicants:, success:, odds:}, ...}, choice: { 2 => {...}, 3 => {...}, 4 => {...} } },
-  #     nonresident: { pref: { 30 => {...}, ...}, choice: { 2 => {...}, ... } }
-  #   }
+  #   results: { "EE001E1R" => { max_points: 30, resident: {...}, nonresident: {...} }, ... },
+  #   has_more: true/false,
+  #   next_page: 2
   # }
-  def draw_results_by_code(filters: {})
+  def draw_results_by_code(filters: {}, page: 1, per_page: DEFAULT_PAGE_SIZE)
     q = apply_filters(@scope, filters)
 
+    # Get unique hunt codes with pagination
+    all_hunt_codes = q.select(:hunt_code).distinct.order(:hunt_code).pluck(:hunt_code)
+    total_codes = all_hunt_codes.count
+    
+    offset = (page - 1) * per_page
+    paginated_codes = all_hunt_codes.slice(offset, per_page) || []
+    
+    return { results: {}, has_more: false, next_page: nil, total_count: 0 } if paginated_codes.empty?
+
+    # Fetch data only for the paginated hunt codes
     rows = q
+      .where(hunt_code: paginated_codes)
       .select(:hunt_code, :value, :resident, :adult, :draw_type, :applicants, :success)
       .order(hunt_code: :asc, value: :desc)
       .to_a
@@ -25,7 +35,9 @@ class HuntStatsService
     
     result = {}
     
-    grouped.each do |hunt_code, records|
+    # Maintain order from paginated_codes
+    paginated_codes.each do |hunt_code|
+      records = grouped[hunt_code] || []
       pref_records = records.select { |r| r.draw_type == "pref" }
       choice_records = records.select { |r| r.draw_type == "total_choice" }
       
@@ -38,7 +50,14 @@ class HuntStatsService
       }
     end
     
-    result
+    has_more = (offset + per_page) < total_codes
+    
+    {
+      results: result,
+      has_more: has_more,
+      next_page: has_more ? page + 1 : nil,
+      total_count: total_codes
+    }
   end
 
   # Legacy method for backwards compatibility

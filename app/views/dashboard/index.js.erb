@@ -1,0 +1,21 @@
+// Append new hunt cards to the results
+<% @draw_results.each do |hunt_code, data| %>
+  document.getElementById('draw-results').insertAdjacentHTML('beforeend', '<%= j render(partial: "hunt_card", locals: { hunt_code: hunt_code, data: data, filters: @filters }) %>');
+<% end %>
+
+// Update the results summary
+document.querySelector('.results-summary p').textContent = 'Showing <%= @draw_results.size + ((@next_page.to_i - 2) * 20) %> of <%= @total_count %> hunt codes';
+
+<% if @has_more %>
+  // Update the Load More button with the next page
+  var loadMoreBtn = document.getElementById('load-more-btn');
+  loadMoreBtn.href = '<%= dashboard_path(page: @next_page, filters: @filters) %>';
+  loadMoreBtn.textContent = 'Load More';
+  loadMoreBtn.removeAttribute('disabled');
+<% else %>
+  // No more results, remove the Load More button
+  var container = document.getElementById('load-more-container');
+  if (container) {
+    container.remove();
+  }
+<% end %>
