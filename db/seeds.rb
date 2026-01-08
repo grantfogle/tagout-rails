@@ -16,7 +16,7 @@ rows.each_slice(batch_size) do |slice|
       sex:        r["sex"],
       unit:       r["unit"],
       season:     r["season"],
-      method:     r["method"],
+      hunt_method:     r["method"],
       resident:   r["resident"],
       adult:      r["adult"],
       draw_type:  r["type"],          # map JSON "type" -> DB "draw_type"
