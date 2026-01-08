@@ -19,17 +19,10 @@
     }
 }
 
-// Filter section
-.form__inline {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    align-items: flex-end;
+// Dashboard-specific form overrides
+.dashboard .form {
     margin-bottom: 2rem;
-    padding: 1.25rem;
-    background: $bg-surface;
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    border: none;
 }
 
 // Draw results section

@@ -1,32 +1,40 @@
 <div class="dashboard">
     <h1>Draw Results by Hunt Code</h1>
 
-    <section>
-        <%= form_with url: dashboard_path, class: 'form form__inline', method: :get, scope: :filters, local: true do |f| %>
-            <div class="form__field">
-                <%= f.select :species,
-                    options_for_select(HuntStat::SPECIES_OPTIONS, @filters[:species]),
-                    { include_blank: "Any species" } %>
-            </div>
+    <%= form_with url: dashboard_path, class: 'form form__inline', method: :get, scope: :filters, local: true do |f| %>
+        <div class="form__field">
+            <%= f.label :species, "Species" %>
+            <%= f.select :species,
+                options_for_select(HuntStat::SPECIES_OPTIONS, @filters[:species]),
+                { include_blank: "All Species" } %>
+        </div>
 
-            <div class="form__field">
-                <%= f.select :sex,
-                options_for_select(HuntStat::SEX_OPTIONS, @filters[:sex]),
-                { include_blank: "Any sex" } %>
-            </div>
+        <div class="form__field">
+            <%= f.label :sex, "Sex" %>
+            <%= f.select :sex,
+                options_for_select(HuntStat.sex_options_for_select, @filters[:sex]),
+                { include_blank: "All" } %>
+        </div>
 
-            <div class="form__field">
-                <%= f.select :hunt_method,
+        <div class="form__field">
+            <%= f.label :hunt_method, "Method" %>
+            <%= f.select :hunt_method,
                 options_for_select(HuntStat::METHOD_OPTIONS, @filters[:hunt_method]),
-                { include_blank: "Any method" } %>
-            </div>
+                { include_blank: "All Methods" } %>
+        </div>
 
-            <div style="margin-top: 12px;">
-                <%= f.submit "Filter" %>
-                <%= link_to "Clear", dashboard_path %>
-            </div>
-        <% end %>
-    </section>
+        <div class="form__field">
+            <%= f.label :resident, "Status" %>
+            <%= f.select :resident,
+                options_for_select(HuntStat::RESIDENT_OPTIONS, @filters[:resident]&.to_s),
+                { include_blank: "All" } %>
+        </div>
+
+        <div class="form__actions">
+            <%= f.submit "Filter" %>
+            <%= link_to "Clear", dashboard_path %>
+        </div>
+    <% end %>
 
     <% if @draw_results.any? %>
         <section class="draw-results">
