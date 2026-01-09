@@ -1,0 +1,84 @@
+<div class="hunt-card" data-hunt-code="<%= hunt_code %>">
+    <div class="hunt-card__header">
+        <h2 class="hunt-card__title"><%= hunt_code %></h2>
+    </div>
+    
+    <div class="results-table-container">
+        <table class="results-table draw-table">
+            <thead>
+                <tr>
+                    <th class="sticky-col">Status</th>
+                    <% (data[:max_points]).downto(0).each do |pts| %>
+                        <th class="point-header"><%= pts %> pts</th>
+                    <% end %>
+                    <th class="choice-header">2nd</th>
+                    <th class="choice-header">3rd</th>
+                    <th class="choice-header">4th</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%# Resident Row - show if no filter or resident filter %>
+                <% if filters[:resident].nil? || filters[:resident] == true %>
+                    <tr class="resident-row">
+                        <td class="sticky-col status-cell">
+                            <span class="status-badge status-badge--resident">R</span>
+                        </td>
+                        <% (data[:max_points]).downto(0).each do |pts| %>
+                            <% cell = data[:resident][:pref][pts] %>
+                            <td class="draw-cell <%= cell_class(cell) %>">
+                                <% if cell %>
+                                    <div class="draw-cell__odds"><%= display_odds(cell) %></div>
+                                    <div class="draw-cell__ratio"><%= cell[:success] %>/<%= cell[:applicants] %></div>
+                                <% else %>
+                                    <span class="draw-cell__empty">—</span>
+                                <% end %>
+                            </td>
+                        <% end %>
+                        <% [2, 3, 4].each do |choice| %>
+                            <% cell = data[:resident][:choice][choice] %>
+                            <td class="draw-cell choice-cell <%= cell_class(cell) %>">
+                                <% if cell %>
+                                    <div class="draw-cell__odds"><%= display_odds(cell) %></div>
+                                    <div class="draw-cell__ratio"><%= cell[:success] %>/<%= cell[:applicants] %></div>
+                                <% else %>
+                                    <span class="draw-cell__empty">—</span>
+                                <% end %>
+                            </td>
+                        <% end %>
+                    </tr>
+                <% end %>
+                
+                <%# Non-Resident Row - show if no filter or non-resident filter %>
+                <% if filters[:resident].nil? || filters[:resident] == false %>
+                    <tr class="nonresident-row">
+                        <td class="sticky-col status-cell">
+                            <span class="status-badge status-badge--nonresident">NR</span>
+                        </td>
+                        <% (data[:max_points]).downto(0).each do |pts| %>
+                            <% cell = data[:nonresident][:pref][pts] %>
+                            <td class="draw-cell <%= cell_class(cell) %>">
+                                <% if cell %>
+                                    <div class="draw-cell__odds"><%= display_odds(cell) %></div>
+                                    <div class="draw-cell__ratio"><%= cell[:success] %>/<%= cell[:applicants] %></div>
+                                <% else %>
+                                    <span class="draw-cell__empty">—</span>
+                                <% end %>
+                            </td>
+                        <% end %>
+                        <% [2, 3, 4].each do |choice| %>
+                            <% cell = data[:nonresident][:choice][choice] %>
+                            <td class="draw-cell choice-cell <%= cell_class(cell) %>">
+                                <% if cell %>
+                                    <div class="draw-cell__odds"><%= display_odds(cell) %></div>
+                                    <div class="draw-cell__ratio"><%= cell[:success] %>/<%= cell[:applicants] %></div>
+                                <% else %>
+                                    <span class="draw-cell__empty">—</span>
+                                <% end %>
+                            </td>
+                        <% end %>
+                    </tr>
+                <% end %>
+            </tbody>
+        </table>
+    </div>
+</div>
