@@ -1,7 +1,7 @@
 require "json"
 
 
-path = Rails.root.join("db/seeds/hunt_stats.json")
+path = Rails.root.join("db/seeds/co_elk_stats.json")
 rows = JSON.parse(File.read(path))
 
 now = Time.current
