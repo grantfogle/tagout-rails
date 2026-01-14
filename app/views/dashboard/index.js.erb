@@ -2,7 +2,7 @@
 document.getElementById('draw-results').insertAdjacentHTML('beforeend', '<%= j render(partial: "table_rows", locals: { draw_results: @draw_results, filters: @filters, max_points: @max_points }) %>');
 
 // Update the results summary
-document.querySelector('.results-summary p').textContent = 'Showing <%= @draw_results.size + ((@next_page.to_i - 2) * 20) %> of <%= @total_count %> hunt codes';
+document.querySelector('.results-summary p').textContent = 'Showing <%= @showing_count %> of <%= @total_count %> hunt codes';
 
 <% if @has_more %>
   // Update the Load More button with the next page

@@ -1,5 +1,5 @@
 class HuntStat < ApplicationRecord
-    SPECIES_OPTIONS = %w[Elk Bear Deer Antelope].freeze
+    SPECIES_OPTIONS = %w[Elk Deer Pronghorn].freeze
     SEX_OPTIONS = %w[M F E].freeze
     SEX_LABELS = { "M" => "Male", "F" => "Female", "E" => "Either" }.freeze
     METHOD_OPTIONS = %w[Archery Muzzleloader Rifle].freeze

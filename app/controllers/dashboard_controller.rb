@@ -17,6 +17,7 @@ class DashboardController < ApplicationController
     @next_page = response[:next_page]
     @total_count = response[:total_count]
     @max_points = response[:global_max_points]
+    @showing_count = [@page * PER_PAGE, @total_count].min
     
     respond_to do |format|
       format.html
