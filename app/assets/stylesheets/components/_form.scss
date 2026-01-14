@@ -1,36 +1,156 @@
+@import "../abstracts/functions";
+@import "../abstracts/colors";
 @import "../abstracts/typography";
 @import "../themes/default";
 
 .form {
-  max-width: 24rem;
-  margin: 2rem auto;
-  padding: 2rem;
+  width: 100%;
+  margin: 0 auto 2rem;
+  padding: 1.5rem;
   background: $bg-surface;
-  border: 1px solid $border-default;
   border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 
-  &__field {
-    margin-bottom: 1rem;
-    text-align: left;
-    width: 100%;
-
-
-      input {
-            width: 100%;
-            padding: 0.5rem 0.75rem;
-            border: 1px solid $border-default;
-            border-radius: 6px;
-            font-size: 1rem;
-        }
+  &__inline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 1rem;
   }
 
-  label {
-    display: block;
-    font-size: $font-size-sm;
-    margin-bottom: 0.25rem;
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    min-width: 140px;
+    flex: 1;
+    max-width: 200px;
+
+    label {
+      font-size: $font-size-sm;
+      font-weight: 500;
+      color: $text-secondary;
+      margin: 0;
+    }
+
+    input,
+    select {
+      width: 100%;
+      height: 42px;
+      padding: 0 0.875rem;
+      border: 1px solid color(grey, 200);
+      border-radius: 8px;
+      font-size: 0.9375rem;
+      color: $text-primary;
+      background-color: $bg-surface;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      appearance: none;
+      -webkit-appearance: none;
+
+      &:hover {
+        border-color: color(grey, 300);
+      }
+
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 3px rgba(color(lime-green, 500), 0.15);
+      }
+
+      &::placeholder {
+        color: color(grey, 400);
+      }
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237E7E7E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      padding-right: 2.5rem;
+      cursor: pointer;
+    }
   }
 
   &__actions {
-    margin-top: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: auto;
+    padding-top: 1.5rem;
+
+    .btn,
+    input[type="submit"] {
+      height: 42px;
+      padding: 0 1.25rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    input[type="submit"] {
+      background: $color-primary;
+      color: $text-inverse;
+
+      &:hover {
+        background: color(lime-green, 600);
+      }
+
+      &:active {
+        transform: translateY(1px);
+      }
+    }
+
+    a {
+      color: $text-secondary;
+      text-decoration: none;
+      font-size: 0.875rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+
+      &:hover {
+        color: $text-primary;
+        background: color(grey, 100);
+      }
+    }
+  }
+
+  // Alternative inline layout for filter forms
+  &--filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 1rem;
+    padding: 1.25rem;
+
+    .form__field {
+      margin-bottom: 0;
+    }
+
+    .form__actions {
+      padding-top: 0;
+    }
+  }
+}
+
+// Form group for labeled inputs
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+
+  &__label {
+    font-size: $font-size-sm;
+    font-weight: 500;
+    color: $text-secondary;
+  }
+
+  &__help {
+    font-size: 0.75rem;
+    color: color(grey, 500);
+    margin-top: 0.25rem;
   }
 }

@@ -1,7 +1,32 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
+require "json"
+
+
+path = Rails.root.join("db/seeds/co_elk_stats.json")
+rows = JSON.parse(File.read(path))
+
+now = Time.current
+batch_size = 5_000
+
+rows.each_slice(batch_size) do |slice|
+  payload = slice.map do |r|
+    {
+      hunt_code:  r["hunt_code"],
+      state:      r["state"],
+      species:    r["species"],
+      sex:        r["sex"],
+      unit:       r["unit"],
+      season:     r["season"],
+      hunt_method:     r["method"],
+      resident:   r["resident"],
+      adult:      r["adult"],
+      draw_type:  r["type"],          # map JSON "type" -> DB "draw_type"
+      value:      r["value"].to_i,
+      applicants: r["applicants"].to_i,
+      success:    r["success"].to_i,
+      created_at: now,
+      updated_at: now
+    }
+  end
+
+  HuntStat.upsert_all(payload, unique_by: "index_hunt_stats_unique_key")
+end
