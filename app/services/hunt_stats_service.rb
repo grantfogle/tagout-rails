@@ -27,7 +27,7 @@ class HuntStatsService
     # Fetch data only for the paginated hunt codes
     rows = q
       .where(hunt_code: paginated_codes)
-      .select(:hunt_code, :value, :resident, :adult, :draw_type, :applicants, :success)
+      .select(:hunt_code, :unit, :value, :resident, :adult, :draw_type, :applicants, :success)
       .order(hunt_code: :asc, value: :desc)
       .to_a
 
@@ -42,21 +42,25 @@ class HuntStatsService
       choice_records = records.select { |r| r.draw_type == "total_choice" }
       
       max_points = pref_records.map(&:value).max || 0
+      unit = records.first&.unit
       
       result[hunt_code] = {
         max_points: max_points,
+        unit: unit,
         resident: build_residency_data(pref_records.select(&:resident), choice_records.select(&:resident)),
         nonresident: build_residency_data(pref_records.reject(&:resident), choice_records.reject(&:resident))
       }
     end
     
     has_more = (offset + per_page) < total_codes
+    global_max_points = result.values.map { |v| v[:max_points] }.max || 0
     
     {
       results: result,
       has_more: has_more,
       next_page: has_more ? page + 1 : nil,
-      total_count: total_codes
+      total_count: total_codes,
+      global_max_points: global_max_points
     }
   end
 
@@ -121,6 +125,7 @@ class HuntStatsService
     q = q.where(species: filters[:species]) if filters[:species].present?
     q = q.where(sex: filters[:sex]) if filters[:sex].present?
     q = q.where(hunt_method: filters[:hunt_method]) if filters[:hunt_method].present?
+    q = q.where(season: filters[:season]) if filters[:season].present?
 
     q = q.where(resident: filters[:resident]) unless filters[:resident].nil?
     q = q.where(adult: filters[:adult]) unless filters[:adult].nil?

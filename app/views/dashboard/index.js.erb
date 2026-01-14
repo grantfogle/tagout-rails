@@ -1,7 +1,5 @@
-// Append new hunt cards to the results
-<% @draw_results.each do |hunt_code, data| %>
-  document.getElementById('draw-results').insertAdjacentHTML('beforeend', '<%= j render(partial: "hunt_card", locals: { hunt_code: hunt_code, data: data, filters: @filters }) %>');
-<% end %>
+// Append new rows to the table
+document.getElementById('draw-results').insertAdjacentHTML('beforeend', '<%= j render(partial: "table_rows", locals: { draw_results: @draw_results, filters: @filters, max_points: @max_points }) %>');
 
 // Update the results summary
 document.querySelector('.results-summary p').textContent = 'Showing <%= @draw_results.size + ((@next_page.to_i - 2) * 20) %> of <%= @total_count %> hunt codes';
