@@ -15,6 +15,9 @@ class HuntStatsService
   def draw_results_by_code(filters: {}, page: 1, per_page: DEFAULT_PAGE_SIZE)
     q = apply_filters(@scope, filters)
 
+    # Get the global max points across ALL filtered data (for consistent column count)
+    global_max_points = q.where(draw_type: "pref").maximum(:value) || 0
+
     # Get unique hunt codes with pagination
     all_hunt_codes = q.select(:hunt_code).distinct.order(:hunt_code).pluck(:hunt_code)
     total_codes = all_hunt_codes.count
@@ -22,7 +25,7 @@ class HuntStatsService
     offset = (page - 1) * per_page
     paginated_codes = all_hunt_codes.slice(offset, per_page) || []
     
-    return { results: {}, has_more: false, next_page: nil, total_count: 0 } if paginated_codes.empty?
+    return { results: {}, has_more: false, next_page: nil, total_count: 0, global_max_points: global_max_points } if paginated_codes.empty?
 
     # Fetch data only for the paginated hunt codes
     rows = q
@@ -53,7 +56,6 @@ class HuntStatsService
     end
     
     has_more = (offset + per_page) < total_codes
-    global_max_points = result.values.map { |v| v[:max_points] }.max || 0
     
     {
       results: result,
