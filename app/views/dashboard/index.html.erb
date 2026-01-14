@@ -1,5 +1,10 @@
 <div class="dashboard">
-    <h1>Draw Results by Hunt Code</h1>
+    <header class="dashboard__header">
+        <h1>Draw Results by Hunt Code</h1>
+        <% if user_signed_in? %>
+            <%= link_to "Log Out", destroy_user_session_path, method: :delete, class: "btn btn--logout" %>
+        <% end %>
+    </header>
 
     <%= form_with url: dashboard_path, class: 'form form__inline', method: :get, scope: :filters, local: true do |f| %>
         <div class="form__field">
