@@ -16,6 +16,8 @@ class DashboardController < ApplicationController
     @has_more = response[:has_more]
     @next_page = response[:next_page]
     @total_count = response[:total_count]
+    @max_points = response[:global_max_points]
+    @showing_count = [@page * PER_PAGE, @total_count].min
     
     respond_to do |format|
       format.html
@@ -27,7 +29,7 @@ class DashboardController < ApplicationController
 
   def extract_filters
     filters = params.fetch(:filters, {})
-                    .permit(:hunt_code, :state, :species, :sex, :hunt_method, :resident, :adult, :draw_type)
+                    .permit(:hunt_code, :state, :species, :sex, :hunt_method, :season, :resident, :adult, :draw_type)
                     .to_h
                     .symbolize_keys
 

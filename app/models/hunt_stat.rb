@@ -1,8 +1,9 @@
 class HuntStat < ApplicationRecord
-    SPECIES_OPTIONS = %w[Elk Bear Deer Antelope].freeze
+    SPECIES_OPTIONS = %w[Elk Deer Pronghorn].freeze
     SEX_OPTIONS = %w[M F E].freeze
     SEX_LABELS = { "M" => "Male", "F" => "Female", "E" => "Either" }.freeze
     METHOD_OPTIONS = %w[Archery Muzzleloader Rifle].freeze
+    SEASON_OPTIONS = %w[E1 O1 O2 O3 O4 L1].freeze
     RESIDENT_OPTIONS = [["Resident", "true"], ["Non-Resident", "false"]].freeze
 
     validates :species, inclusion: { in: SPECIES_OPTIONS }, allow_blank: true

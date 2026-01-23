@@ -1,6 +1,6 @@
 <div class="dashboard">
     <header class="dashboard__header">
-        <h1>Draw Results by Hunt Code</h1>
+        <h1>Draw Results</h1>
         <% if user_signed_in? %>
             <%= link_to "Log Out", destroy_user_session_path, method: :delete, class: "btn btn--logout" %>
         <% end %>
@@ -29,6 +29,13 @@
         </div>
 
         <div class="form__field">
+            <%= f.label :season, "Season" %>
+            <%= f.select :season,
+                options_for_select(HuntStat::SEASON_OPTIONS, @filters[:season]),
+                { include_blank: "All Seasons" } %>
+        </div>
+
+        <div class="form__field">
             <%= f.label :resident, "Status" %>
             <%= f.select :resident,
                 options_for_select(HuntStat::RESIDENT_OPTIONS, @filters[:resident]&.to_s),
@@ -43,14 +50,29 @@
 
     <% if @draw_results.any? %>
         <div class="results-summary">
-            <p>Showing <%= @draw_results.size %> of <%= @total_count %> hunt codes</p>
+            <p>Showing <%= @showing_count %> of <%= @total_count %> hunt codes</p>
         </div>
 
-        <section class="draw-results" id="draw-results">
-            <% @draw_results.each do |hunt_code, data| %>
-                <%= render partial: 'hunt_card', locals: { hunt_code: hunt_code, data: data, filters: @filters } %>
-            <% end %>
-        </section>
+        <div class="results-table-container">
+            <table class="results-table consolidated-table">
+                <thead>
+                    <tr>
+                        <th class="sticky-col sticky-col--code">Hunt Code</th>
+                        <th class="sticky-col sticky-col--unit">Unit</th>
+                        <th class="sticky-col sticky-col--status">Status</th>
+                        <% @max_points.downto(0).each do |pts| %>
+                            <th class="point-header"><%= pts %></th>
+                        <% end %>
+                        <th class="choice-header">2nd</th>
+                        <th class="choice-header">3rd</th>
+                        <th class="choice-header">4th</th>
+                    </tr>
+                </thead>
+                <tbody id="draw-results">
+                    <%= render partial: 'table_rows', locals: { draw_results: @draw_results, filters: @filters, max_points: @max_points } %>
+                </tbody>
+            </table>
+        </div>
 
         <% if @has_more %>
             <div class="load-more-container" id="load-more-container">
