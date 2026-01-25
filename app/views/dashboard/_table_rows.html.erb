@@ -7,9 +7,9 @@
             <td class="sticky-col sticky-col--status">
                 <span class="status-badge status-badge--resident">R</span>
             </td>
-            <% max_points.downto(0).each do |pts| %>
-                <% cell = data[:resident][:pref][pts] %>
-                <td class="draw-cell <%= cell_class(cell) %>">
+            <% [4, 3, 2].each do |choice| %>
+                <% cell = data[:resident][:choice][choice] %>
+                <td class="draw-cell choice-cell <%= cell_class(cell) %>">
                     <% if cell && cell[:applicants] && cell[:applicants] > 0 %>
                         <div class="draw-cell__odds"><%= display_odds(cell) %></div>
                         <div class="draw-cell__ratio"><%= cell[:success] %>/<%= cell[:applicants] %></div>
@@ -18,9 +18,9 @@
                     <% end %>
                 </td>
             <% end %>
-            <% [2, 3, 4].each do |choice| %>
-                <% cell = data[:resident][:choice][choice] %>
-                <td class="draw-cell choice-cell <%= cell_class(cell) %>">
+            <% (0..max_points).each do |pts| %>
+                <% cell = data[:resident][:pref][pts] %>
+                <td class="draw-cell <%= cell_class(cell) %>">
                     <% if cell && cell[:applicants] && cell[:applicants] > 0 %>
                         <div class="draw-cell__odds"><%= display_odds(cell) %></div>
                         <div class="draw-cell__ratio"><%= cell[:success] %>/<%= cell[:applicants] %></div>
@@ -40,9 +40,9 @@
             <td class="sticky-col sticky-col--status">
                 <span class="status-badge status-badge--nonresident">NR</span>
             </td>
-            <% max_points.downto(0).each do |pts| %>
-                <% cell = data[:nonresident][:pref][pts] %>
-                <td class="draw-cell <%= cell_class(cell) %>">
+            <% [4, 3, 2].each do |choice| %>
+                <% cell = data[:nonresident][:choice][choice] %>
+                <td class="draw-cell choice-cell <%= cell_class(cell) %>">
                     <% if cell && cell[:applicants] && cell[:applicants] > 0 %>
                         <div class="draw-cell__odds"><%= display_odds(cell) %></div>
                         <div class="draw-cell__ratio"><%= cell[:success] %>/<%= cell[:applicants] %></div>
@@ -51,9 +51,9 @@
                     <% end %>
                 </td>
             <% end %>
-            <% [2, 3, 4].each do |choice| %>
-                <% cell = data[:nonresident][:choice][choice] %>
-                <td class="draw-cell choice-cell <%= cell_class(cell) %>">
+            <% (0..max_points).each do |pts| %>
+                <% cell = data[:nonresident][:pref][pts] %>
+                <td class="draw-cell <%= cell_class(cell) %>">
                     <% if cell && cell[:applicants] && cell[:applicants] > 0 %>
                         <div class="draw-cell__odds"><%= display_odds(cell) %></div>
                         <div class="draw-cell__ratio"><%= cell[:success] %>/<%= cell[:applicants] %></div>
