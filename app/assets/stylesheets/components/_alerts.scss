@@ -1,0 +1,24 @@
+@import "../themes/default";
+
+.notice {
+    background-color: $color-primary-hover;
+    color: white;
+    display: flex;
+    justify-content: center;
+    opacity: 1;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    position: absolute;
+    // TODO: add variable for header height
+    top: 64px;
+    width: 100%;
+  }
+  
+.notice.fade-out {
+    opacity: 0;
+    transform: translateY(-5px);
+}
+
+.alert {
+    background-color: $color-primary-hover;
+    color: white;
+}
