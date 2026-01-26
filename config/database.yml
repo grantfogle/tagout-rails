@@ -84,3 +84,4 @@ production:
   database: tagout_rails_production
   username: tagout_rails
   password: <%= ENV['TAGOUT_RAILS_DATABASE_PASSWORD'] %>
+  connect_timeout: 60
