@@ -37,6 +37,7 @@
 
 .feedback__panel {
     display: none;
+    position: relative;
     width: 320px;
     background: $bg-surface;
     border-radius: 12px;
@@ -46,6 +47,29 @@
     .feedback--open & {
         display: block;
         animation: feedback-slide-up 0.2s ease;
+    }
+}
+
+.feedback__close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: $text-secondary;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    
+    &:hover {
+        background: color(grey, 100);
+        color: $text-primary;
     }
 }
 
