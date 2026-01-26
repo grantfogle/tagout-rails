@@ -11,3 +11,14 @@ import "channels"
 Rails.start()
 Turbolinks.start()
 ActiveStorage.start()
+
+document.addEventListener("turbolinks:load", () => {
+  document.querySelectorAll(".notice").forEach((notice) => {
+    if (notice.dataset.autoDismissed) return;
+    notice.dataset.autoDismissed = true;
+  
+    setTimeout(() => notice.classList.add("fade-out"), 2500);
+    setTimeout(() => notice.remove(), 3200);
+  });
+});
+  

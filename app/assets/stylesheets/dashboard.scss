@@ -312,11 +312,7 @@
 
 // Choice columns separator
 .choice-cell {
-    border-left: 2px solid color(orange, 200);
-
-    &:first-of-type {
-        border-left-width: 3px;
-    }
+    border-right: 2px solid color(orange, 200);
 }
 
 // Results summary

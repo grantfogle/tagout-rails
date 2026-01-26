@@ -1,8 +1,10 @@
+@import "../abstracts/variables";
 @import "../abstracts/typography";
 @import "../themes/default";
 
 .page {
-  min-height: 100vh;
+  min-height: calc(100vh - 64px);
+  // why doesnt variable work here?
   display: grid;
   place-content: center;
   text-align: center;

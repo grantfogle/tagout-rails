@@ -1,12 +1,15 @@
-<div class="dashboard">
-    <header class="dashboard__header">
-        <h1>Draw Results</h1>
-        <% if user_signed_in? %>
-            <%= link_to "Log Out", destroy_user_session_path, method: :delete, class: "btn btn--logout" %>
-        <% end %>
-    </header>
+<%= render "shared/feedback" %>
 
+<div class="dashboard">
     <%= form_with url: dashboard_path, class: 'form form__inline', method: :get, scope: :filters, local: true do |f| %>
+        <div class="form__field">
+            <%= f.label :state, "State" %>
+            <%= f.select :state,
+                options_for_select([["Colorado", "CO"]], "CO"),
+                {},
+                { disabled: true } %>
+        </div>
+
         <div class="form__field">
             <%= f.label :species, "Species" %>
             <%= f.select :species,
@@ -60,12 +63,12 @@
                         <th class="sticky-col sticky-col--code">Hunt Code</th>
                         <th class="sticky-col sticky-col--unit">Unit</th>
                         <th class="sticky-col sticky-col--status">Status</th>
-                        <% @max_points.downto(0).each do |pts| %>
+                        <th class="choice-header">4th</th>
+                        <th class="choice-header">3rd</th>
+                        <th class="choice-header">2nd</th>
+                        <% (0..@max_points).each do |pts| %>
                             <th class="point-header"><%= pts %></th>
                         <% end %>
-                        <th class="choice-header">2nd</th>
-                        <th class="choice-header">3rd</th>
-                        <th class="choice-header">4th</th>
                     </tr>
                 </thead>
                 <tbody id="draw-results">
