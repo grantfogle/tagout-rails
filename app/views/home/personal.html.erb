@@ -1,0 +1,51 @@
+<div class="home">
+  <header class="home__header">
+    <% if @profile %>
+      <h1 class="home__title">Welcome back, <%= @profile.name %>.</h1>
+      <% if @profile.residency_label %>
+        <p class="home__subtitle"><%= @profile.residency_label %></p>
+      <% end %>
+    <% else %>
+      <h1 class="home__title">Welcome to Tagout.</h1>
+      <p class="home__subtitle">Colorado big game draw odds, by hunt code.</p>
+    <% end %>
+  </header>
+
+  <% unless @profile %>
+    <aside class="banner">
+      <div>
+        <strong>Finish your profile</strong>
+        <p>Tell us your species, points and states so we can tailor your odds.</p>
+      </div>
+      <%= link_to "Set up profile", new_profile_path, class: "button button--primary" %>
+    </aside>
+  <% end %>
+
+  <section class="home__section">
+    <h2 class="home__heading">Your species</h2>
+    <% species_list = @profile&.favorite_species.presence || HuntStat::SPECIES_OPTIONS %>
+    <div class="home__cards">
+      <% species_list.each do |species| %>
+        <%= link_to dashboard_path_for(@profile, species), class: "card home__card" do %>
+          <span class="home__card-title"><%= species %></span>
+          <% points = @profile&.points_for(species) %>
+          <span class="home__card-meta">
+            <%= points.nil? ? "No points recorded" : pluralize(points, "preference point") %>
+          </span>
+          <span class="home__card-cta">View draw odds &rarr;</span>
+        <% end %>
+      <% end %>
+    </div>
+  </section>
+
+  <section class="home__section">
+    <h2 class="home__heading">Quick links</h2>
+    <div class="home__links">
+      <%= link_to "Open dashboard", dashboard_path, class: "button button--primary" %>
+      <%= link_to "Features", features_path, class: "button button--secondary" %>
+      <% if @profile %>
+        <%= link_to "Edit profile", edit_profile_path, class: "button button--secondary" %>
+      <% end %>
+    </div>
+  </section>
+</div>
