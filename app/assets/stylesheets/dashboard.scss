@@ -6,6 +6,9 @@
 @import "abstracts/colors";
 @import "themes/default";
 
+// Shared so the table head lines up with the filter sidebar header
+$results-header-height: 3.25rem;
+
 .dashboard {
     background-color: $bg-page;
     padding: 2rem;
@@ -51,6 +54,294 @@
     border: none;
 }
 
+// Page layout: results on the left, collapsible filter sidebar filling the right side
+.dashboard-layout {
+    display: flex;
+    align-items: stretch;
+    height: calc(100vh - 64px); // viewport minus navbar; only the table scrolls
+    overflow: hidden;
+
+    .dashboard {
+        flex: 1;
+        min-width: 0;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 0; // table runs flush to the top, left and bottom edges
+    }
+}
+
+.filter-sidebar {
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 64px);
+    width: 56px; // collapsed: just the menu icon
+    overflow: hidden;
+    background: $bg-surface;
+    border-left: 1px solid color(grey, 200);
+    transition: width 0.25s ease;
+
+    &--open {
+        width: 300px;
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex: 0 0 auto;
+        box-sizing: border-box;
+        height: $results-header-height;
+        padding: 0 0.875rem;
+        border-bottom: 1px solid color(grey, 200);
+    }
+
+    // Open: title on the left, menu button right-aligned (button comes first in the DOM,
+    // so reversing the row keeps it visible at the left when collapsed).
+    &--open &__header {
+        flex-direction: row-reverse;
+        justify-content: space-between;
+    }
+
+    &__menu {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 4px;
+        flex: 0 0 auto;
+        width: 28px;
+        height: 28px;
+        padding: 4px;
+        background: transparent;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+
+        &:hover {
+            background: color(grey, 100);
+        }
+    }
+
+    &__menu-bar {
+        display: block;
+        height: 2px;
+        background: $text-primary;
+        border-radius: 1px;
+    }
+
+    &__title {
+        margin: 0;
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: $text-primary;
+        white-space: nowrap;
+        opacity: 0;
+        transition: opacity 0.15s ease;
+    }
+
+    &--open &__title {
+        opacity: 1;
+        transition-delay: 0.1s;
+    }
+
+    &__body {
+        flex: 1;
+        min-width: 300px; // keep content laid out while the width animates
+        overflow-y: auto;
+        padding: 1.25rem;
+        visibility: hidden;
+        transition: visibility 0s linear 0.25s;
+    }
+
+    &--open &__body {
+        visibility: visible;
+        transition-delay: 0s;
+    }
+
+    .form {
+        padding: 0;
+        margin: 0;
+        box-shadow: none;
+    }
+
+    .form__inline {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+    }
+
+    // Horizontal separator between each filter option
+    .form__field {
+        flex: 0 0 auto;
+        // Bleed out over the body's 1.25rem side padding so the line spans the full sidebar width
+        margin: 0 -1.25rem;
+        padding: 1rem 1.25rem;
+        width: auto;
+        border-bottom: 1px solid color(grey, 200);
+
+        &:first-child {
+            padding-top: 0;
+        }
+
+        &:last-child {
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+    }
+
+    // Collapsed filter row: label + current value + Edit; the select is revealed on Edit
+    .filter-field {
+        &__summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            width: 100%;
+        }
+
+        &__text {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        &__label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: $text-secondary;
+        }
+
+        &__value {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: $text-primary;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__edit {
+            flex: 0 0 auto;
+            padding: 0.25rem 0.625rem;
+            background: transparent;
+            color: $text-secondary;
+            border: 1px solid color(grey, 300);
+            border-radius: 6px;
+            font-size: 0.8125rem;
+            cursor: pointer;
+
+            &:hover:not(:disabled) {
+                background: color(grey, 100);
+            }
+
+            &:disabled {
+                opacity: 0.4;
+                cursor: default;
+            }
+        }
+
+        &__input {
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+    }
+
+    // Two inputs sharing one filter box (preference points + minimum odds)
+    .field-pair {
+        flex-direction: row;
+        gap: 0.75rem;
+
+        &__item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.375rem;
+            flex: 1;
+            min-width: 0;
+        }
+    }
+
+    .unit-search {
+        &__row {
+            display: flex;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        &__add,
+        &__clear {
+            padding: 0.375rem 0.75rem;
+            background: transparent;
+            color: $text-secondary;
+            border: 1px solid color(grey, 300);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+
+            &:hover {
+                background: color(grey, 100);
+            }
+        }
+
+        &__chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.375rem;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        &__chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.25rem 0.5rem;
+            background: color(grey, 100);
+            color: $text-primary;
+            border: none;
+            border-radius: 999px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            cursor: pointer;
+
+            &:hover {
+                background: color(grey, 200);
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        position: fixed;
+        right: 0;
+        top: 64px;
+        z-index: 50;
+    }
+}
+
+// Feedback widget lives in the footer bar, just left of the filter sidebar (it's fixed, so it
+// follows the sidebar's width). Open, the panel lifts above the bar.
+.dashboard-layout .feedback {
+    bottom: 0.5rem; // vertically centers the compact button in the ~46px footer bar
+    right: calc(56px + 1rem); // collapsed sidebar
+    transition: right 0.25s ease;
+
+    &--open {
+        bottom: 3.5rem;
+    }
+
+    .feedback__toggle {
+        padding: 0.375rem 0.75rem;
+        box-shadow: none;
+    }
+}
+
+.dashboard-layout .filter-sidebar--open ~ .feedback {
+    right: calc(300px + 1rem); // open sidebar
+}
+
 // Draw results section
 .draw-results {
     display: flex;
@@ -83,12 +374,11 @@
 // Table container with both horizontal and vertical scroll
 .results-table-container {
     width: 100%;
-    max-height: 70vh;
+    flex: 1;
+    min-height: 0; // let it shrink to the space between header and footer bar
     overflow: auto;
     -webkit-overflow-scrolling: touch;
     background: $bg-surface;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 // Consolidated results table
@@ -105,7 +395,9 @@
         z-index: 20;
 
         th {
-            padding: 0.75rem 0.5rem;
+            box-sizing: border-box;
+            height: $results-header-height;
+            padding: 0 0.5rem;
             font-weight: 600;
             color: $text-secondary;
             text-align: center;
@@ -121,6 +413,12 @@
             min-width: 50px;
         }
 
+        // Column picked in the "Preference points" filter
+        .point-header--highlight {
+            background: $color-primary;
+            color: #fff;
+        }
+
         .choice-header {
             min-width: 50px;
             background: color(orange, 100);
@@ -131,18 +429,20 @@
     tbody {
         tr {
             border-bottom: 1px solid color(grey, 100);
-            
-            &:hover {
-                background: rgba(0, 0, 0, 0.02);
-            }
-        }
-
-        .resident-row {
             background: $bg-surface;
-        }
 
-        .nonresident-row {
-            background: color(grey, 050);
+            &:nth-child(even) {
+                background: color(grey, 050);
+            }
+
+            &:hover {
+                background: color(grey, 100);
+
+                // Tinted odds cells keep their color, just a touch darker
+                .draw-cell {
+                    filter: brightness(0.96);
+                }
+            }
         }
     }
 
@@ -176,13 +476,7 @@
             background: color(grey, 100);
         }
 
-        .resident-row & {
-            background: $bg-surface;
-        }
 
-        .nonresident-row & {
-            background: color(grey, 050);
-        }
     }
 
     &--unit {
@@ -196,13 +490,7 @@
             background: color(grey, 100);
         }
 
-        .resident-row & {
-            background: $bg-surface;
-        }
 
-        .nonresident-row & {
-            background: color(grey, 050);
-        }
     }
 
     &--status {
@@ -215,13 +503,7 @@
             background: color(grey, 100);
         }
 
-        .resident-row & {
-            background: $bg-surface;
-        }
 
-        .nonresident-row & {
-            background: color(grey, 050);
-        }
     }
 }
 
@@ -310,6 +592,12 @@
     }
 }
 
+// Highlighted preference-points column: tint layered over the odds color, plus side borders
+.draw-cell--highlight {
+    background-image: linear-gradient(rgba($color-primary, 0.14), rgba($color-primary, 0.14));
+    box-shadow: inset 2px 0 0 $color-primary, inset -2px 0 0 $color-primary;
+}
+
 // Choice columns separator
 .choice-cell {
     border-right: 2px solid color(orange, 200);
@@ -317,8 +605,13 @@
 
 // Results summary
 .results-summary {
-    margin-bottom: 1rem;
-    
+    // Footer bar pinned to the bottom of the screen
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 0.75rem 1rem;
+    background: $bg-surface;
+    border-top: 1px solid color(grey, 200);
+
     p {
         color: $text-secondary;
         font-size: 0.875rem;
@@ -326,43 +619,15 @@
     }
 }
 
-// Load more button
+// Infinite scroll sentinel (see infinite_scroll_controller.js)
 .load-more-container {
     display: flex;
     justify-content: center;
-    margin-top: 2rem;
-    padding-bottom: 2rem;
-}
+    padding: 2rem 0;
 
-.btn--load-more {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.875rem 2rem;
-    background: $bg-surface;
-    color: $text-primary;
-    border: 2px solid color(grey, 200);
-    border-radius: 8px;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    min-width: 160px;
-
-    &:hover {
-        border-color: $color-primary;
-        color: $color-primary;
-        background: color(lime-green, 050);
-    }
-
-    &:active {
-        transform: translateY(1px);
-    }
-
-    &[disabled] {
-        opacity: 0.6;
-        cursor: not-allowed;
+    &__label {
+        color: $text-secondary;
+        font-size: 0.875rem;
     }
 }
 
