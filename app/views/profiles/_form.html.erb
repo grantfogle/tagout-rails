@@ -1,0 +1,79 @@
+<%= form_with model: profile, url: profile_path, local: true,
+      class: "form profile-form", data: { controller: "profile-form" } do |f| %>
+  <% if profile.errors.any? %>
+    <div class="alert alert--error">
+      <ul>
+        <% profile.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form__field">
+    <%= f.label :name, "Name" %>
+    <%= f.text_field :name, required: true, autocomplete: "name" %>
+  </div>
+
+  <div class="form__field">
+    <%= f.label :residency_state, "State of residency" %>
+    <%= f.select :residency_state,
+          Profile::STATES.map { |code, name| [name, code] },
+          include_blank: "Select a state" %>
+  </div>
+
+  <fieldset class="form__field profile-form__group">
+    <legend>Favorite species</legend>
+    <%= f.collection_check_boxes :favorite_species, HuntStat::SPECIES_OPTIONS, :itself, :itself do |b| %>
+      <label class="form__check">
+        <%= b.check_box(data: { profile_form_target: "species", action: "change->profile-form#sync" }) %>
+        <%= b.text %>
+      </label>
+    <% end %>
+  </fieldset>
+
+  <fieldset class="form__field profile-form__group">
+    <legend>Preference points</legend>
+    <p class="profile-form__hint">Pick favorite species above to enter your points.</p>
+    <%= f.fields_for :preference_points do |pf| %>
+      <div class="form__field" data-profile-form-target="points" data-species="<%= pf.object.species %>">
+        <%= pf.hidden_field :species %>
+        <%= pf.label :points, "#{pf.object.species} preference points" %>
+        <%= pf.number_field :points, min: 0, max: 99 %>
+      </div>
+    <% end %>
+  </fieldset>
+
+  <fieldset class="form__field profile-form__group">
+    <legend>States you're interested in</legend>
+    <% state_options = Profile::TRACKABLE_STATES.map do |code|
+         label = Profile::STATES[code]
+         label += " (coming soon)" unless Profile::AVAILABLE_STATES.include?(code)
+         [label, code]
+       end %>
+    <%= f.collection_check_boxes :states_of_interest, state_options, :last, :first do |b| %>
+      <label class="form__check"><%= b.check_box %> <%= b.text %></label>
+    <% end %>
+  </fieldset>
+
+  <fieldset class="form__field profile-form__group">
+    <legend>Preferred methods</legend>
+    <%= f.collection_check_boxes :preferred_methods, HuntStat::METHOD_OPTIONS, :itself, :itself do |b| %>
+      <label class="form__check"><%= b.check_box %> <%= b.text %></label>
+    <% end %>
+  </fieldset>
+
+  <div class="form__field">
+    <label class="form__check">
+      <%= f.check_box :notifications_enabled %>
+      Email me about application deadlines and draw results
+    </label>
+  </div>
+
+  <div class="profile-form__actions">
+    <%= f.submit "Save profile", class: "button button--primary" %>
+    <% if profile.new_record? %>
+      <%= link_to "Skip for now", root_path, class: "button button--secondary" %>
+    <% end %>
+  </div>
+<% end %>
