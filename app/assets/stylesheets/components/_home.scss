@@ -1,0 +1,92 @@
+@import "../abstracts/variables";
+@import "../abstracts/typography";
+@import "../themes/default";
+
+.home,
+.features {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+  background: $bg-page;
+}
+
+.home__title,
+.features__title {
+  margin: 0 0 0.5rem;
+}
+
+.features__header {
+  margin-bottom: 1.5rem;
+}
+
+.home__heading,
+.features__heading {
+  margin-bottom: 1rem;
+}
+
+.home__subtitle,
+.features__subtitle {
+  margin: 0 0 2rem;
+  color: $text-secondary;
+}
+
+.home__section,
+.features__section {
+  margin-top: 2.5rem;
+}
+
+.home__cards,
+.features__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.home__card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: inherit;
+
+  &:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.home__card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.home__card-meta {
+  color: $text-secondary;
+}
+
+.home__card-cta {
+  margin-top: auto;
+  font-weight: 600;
+}
+
+.home__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background: #ffffff;
+
+  p {
+    margin: 0.25rem 0 0;
+    color: $text-secondary;
+  }
+}
