@@ -1,31 +1,29 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-one:
-  hunt_code: MyString
-  state: MyString
-  species: MyString
-  sex: MyString
-  unit: MyString
-  season: MyString
-  method: MyString
-  resident: false
-  adult: false
-  draw_type: MyString
+elk_pref:
+  hunt_code: EE001O1R
+  state: CO
+  species: Elk
+  sex: E
+  unit: "001"
+  season: O1
+  hunt_method: Rifle
+  resident: true
+  adult: true
+  draw_type: pref
   value: 1
-  applicants: 1
-  success: 1
+  applicants: 10
+  success: 5
 
-two:
-  hunt_code: MyString
-  state: MyString
-  species: MyString
-  sex: MyString
-  unit: MyString
-  season: MyString
-  method: MyString
-  resident: false
-  adult: false
-  draw_type: MyString
-  value: 1
-  applicants: 1
-  success: 1
+elk_choice:
+  hunt_code: EE001O1R
+  state: CO
+  species: Elk
+  sex: E
+  unit: "001"
+  season: O1
+  hunt_method: Rifle
+  resident: true
+  adult: true
+  draw_type: total_choice
+  value: 2
+  applicants: 8
+  success: 2
