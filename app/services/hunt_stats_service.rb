@@ -19,7 +19,7 @@ class HuntStatsService
     global_max_points = q.where(draw_type: "pref").maximum(:value) || 0
 
     # Get unique hunt codes with pagination
-    all_hunt_codes = q.select(:hunt_code).distinct.order(:hunt_code).pluck(:hunt_code)
+    all_hunt_codes = apply_min_odds(q, filters).select(:hunt_code).distinct.order(:hunt_code).pluck(:hunt_code)
     total_codes = all_hunt_codes.count
     
     offset = (page - 1) * per_page
@@ -121,6 +121,18 @@ class HuntStatsService
     { pref: pref_data, choice: choice_data }
   end
 
+  # Keeps only hunt codes that have at least one draw with odds >= filters[:odds]. Whole codes are
+  # kept (not just the matching rows) so their other columns still display. If a preference-points
+  # column is chosen, only that column's odds are considered.
+  def apply_min_odds(q, filters)
+    min_odds = filters[:odds]
+    return q unless min_odds.present? && min_odds.positive?
+
+    matching = q.where("hunt_stats.applicants > 0 AND hunt_stats.success * 100.0 / hunt_stats.applicants >= ?", min_odds)
+    matching = matching.where(draw_type: "pref", value: filters[:points]) if filters[:points]
+    q.where(hunt_code: matching.select(:hunt_code))
+  end
+
   def apply_filters(q, filters)
     q = q.where(state: filters[:state]) if filters[:state].present?
     q = q.where(hunt_code: filters[:hunt_code]) if filters[:hunt_code].present?
@@ -128,6 +140,7 @@ class HuntStatsService
     q = q.where(sex: filters[:sex]) if filters[:sex].present?
     q = q.where(hunt_method: filters[:hunt_method]) if filters[:hunt_method].present?
     q = q.where(season: filters[:season]) if filters[:season].present?
+    q = q.where(unit: filters[:units]) if filters[:units].present?
 
     q = q.where(resident: filters[:resident]) unless filters[:resident].nil?
     q = q.where(adult: filters[:adult]) unless filters[:adult].nil?

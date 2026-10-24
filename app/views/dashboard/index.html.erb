@@ -1,61 +1,6 @@
-<%= render "shared/feedback" %>
-
+<div class="dashboard-layout">
 <div class="dashboard">
-    <%= form_with url: dashboard_path, class: 'form form__inline', method: :get, scope: :filters, local: true do |f| %>
-        <div class="form__field">
-            <%= f.label :state, "State" %>
-            <%= f.select :state,
-                options_for_select([["Colorado", "CO"]], "CO"),
-                {},
-                { disabled: true } %>
-        </div>
-
-        <div class="form__field">
-            <%= f.label :species, "Species" %>
-            <%= f.select :species,
-                options_for_select(HuntStat::SPECIES_OPTIONS, @filters[:species]),
-                { include_blank: "All Species" } %>
-        </div>
-
-        <div class="form__field">
-            <%= f.label :sex, "Sex" %>
-            <%= f.select :sex,
-                options_for_select(HuntStat.sex_options_for_select, @filters[:sex]),
-                { include_blank: "All" } %>
-        </div>
-
-        <div class="form__field">
-            <%= f.label :hunt_method, "Method" %>
-            <%= f.select :hunt_method,
-                options_for_select(HuntStat::METHOD_OPTIONS, @filters[:hunt_method]),
-                { include_blank: "All Methods" } %>
-        </div>
-
-        <div class="form__field">
-            <%= f.label :season, "Season" %>
-            <%= f.select :season,
-                options_for_select(HuntStat::SEASON_OPTIONS, @filters[:season]),
-                { include_blank: "All Seasons" } %>
-        </div>
-
-        <div class="form__field">
-            <%= f.label :resident, "Status" %>
-            <%= f.select :resident,
-                options_for_select(HuntStat::RESIDENT_OPTIONS, @filters[:resident]&.to_s),
-                { include_blank: "All" } %>
-        </div>
-
-        <div class="form__actions">
-            <%= f.submit "Filter" %>
-            <%= link_to "Clear", dashboard_path %>
-        </div>
-    <% end %>
-
     <% if @draw_results.any? %>
-        <div class="results-summary">
-            <p>Showing <%= @showing_count %> of <%= @total_count %> hunt codes</p>
-        </div>
-
         <div class="results-table-container">
             <table class="results-table consolidated-table">
                 <thead>
@@ -67,7 +12,7 @@
                         <th class="choice-header">3rd</th>
                         <th class="choice-header">2nd</th>
                         <% (0..@max_points).each do |pts| %>
-                            <th class="point-header"><%= pts %></th>
+                            <th class="point-header <%= 'point-header--highlight' if @filters[:points] == pts %>"><%= pts %></th>
                         <% end %>
                     </tr>
                 </thead>
@@ -75,21 +20,80 @@
                     <%= render partial: 'table_rows', locals: { draw_results: @draw_results, filters: @filters, max_points: @max_points } %>
                 </tbody>
             </table>
+            <% if @has_more %>
+                <div class="load-more-container"
+                    id="load-more-container"
+                    data-controller="infinite-scroll"
+                    data-pages="<%= @pages %>"
+                    data-filters="<%= @filters.to_json %>">
+                    <span class="load-more-container__label">Loading more…</span>
+                </div>
+            <% end %>
         </div>
 
-        <% if @has_more %>
-            <div class="load-more-container" id="load-more-container">
-                <%= link_to "Load More", 
-                    dashboard_path(page: @next_page, filters: @filters), 
-                    class: "btn btn--load-more",
-                    remote: true,
-                    id: "load-more-btn",
-                    data: { disable_with: "Loading..." } %>
-            </div>
-        <% end %>
+        <div class="results-summary">
+            <p>Showing <%= @showing_count %> of <%= @total_count %> results</p>
+        </div>
     <% else %>
         <section class="empty-state">
             <p>No draw results found. Try adjusting your filters.</p>
         </section>
     <% end %>
+</div>
+
+<aside class="filter-sidebar filter-sidebar--open" data-controller="filter-sidebar" data-reflex-permanent id="filter-sidebar">
+    <div class="filter-sidebar__header">
+        <button type="button" class="filter-sidebar__menu" data-action="filter-sidebar#toggle" data-filter-sidebar-target="button" aria-expanded="true" aria-controls="filter-sidebar-body" aria-label="Toggle filters">
+            <span class="filter-sidebar__menu-bar"></span>
+            <span class="filter-sidebar__menu-bar"></span>
+            <span class="filter-sidebar__menu-bar"></span>
+        </button>
+        <h2 class="filter-sidebar__title">Filters</h2>
+    </div>
+    <div class="filter-sidebar__body" id="filter-sidebar-body">
+    <%= form_with url: dashboard_path, class: 'form form__inline', method: :get, scope: :filters, local: true do |f| %>
+        <%= render "filter_field", f: f, field: :state, label: "State", options: [["Colorado", "CO"]], selected: "CO", blank: nil, disabled: true %>
+        <%= render "filter_field", f: f, field: :species, label: "Species", options: HuntStat::SPECIES_OPTIONS, selected: @filters[:species], blank: "All Species" %>
+        <%= render "filter_field", f: f, field: :sex, label: "Sex", options: HuntStat.sex_options_for_select, selected: @filters[:sex], blank: "All" %>
+        <%= render "filter_field", f: f, field: :hunt_method, label: "Method", options: HuntStat::METHOD_OPTIONS, selected: @filters[:hunt_method], blank: "All Methods" %>
+        <%= render "filter_field", f: f, field: :season, label: "Season", options: HuntStat::SEASON_OPTIONS, selected: @filters[:season], blank: "All Seasons" %>
+        <%= render "filter_field", f: f, field: :resident, label: "Status", options: HuntStat::RESIDENT_OPTIONS, selected: @filters[:resident]&.to_s, blank: "All" %>
+
+        <div class="form__field field-pair">
+            <div class="field-pair__item">
+                <%= f.label :points, "Pref. points" %>
+                <%= f.number_field :points,
+                    value: @filters[:points],
+                    min: 0, max: 99, step: 1,
+                    placeholder: "e.g. 5",
+                    data: { reflex: "change->Dashboard#filter" } %>
+            </div>
+            <div class="field-pair__item">
+                <%= f.label :odds, "Min odds %" %>
+                <%= f.number_field :odds,
+                    value: @filters[:odds],
+                    min: 0, max: 100, step: 1,
+                    placeholder: "0–100",
+                    data: { reflex: "change->Dashboard#filter" } %>
+            </div>
+        </div>
+
+        <div class="form__field unit-search" data-controller="unit-search">
+            <label for="unit-search-input">Units</label>
+            <div class="unit-search__row">
+                <input type="text" id="unit-search-input" inputmode="numeric" autocomplete="off"
+                    placeholder="Add a unit, e.g. 11"
+                    data-unit-search-target="input"
+                    data-action="keydown->unit-search#keydown">
+                <button type="button" class="unit-search__add" data-action="unit-search#add">Add</button>
+            </div>
+            <ul class="unit-search__chips" data-unit-search-target="chips"></ul>
+            <%= f.hidden_field :units, value: Array(@filters[:units]).join(","), data: { unit_search_target: "field" } %>
+            <button type="button" class="unit-search__clear" data-action="unit-search#clear" data-unit-search-target="clear" hidden>Clear units</button>
+        </div>
+    <% end %>
+    </div>
+</aside>
+
+<%= render "shared/feedback" %>
 </div>

@@ -20,7 +20,7 @@
             <% end %>
             <% (0..max_points).each do |pts| %>
                 <% cell = data[:resident][:pref][pts] %>
-                <td class="draw-cell <%= cell_class(cell) %>">
+                <td class="draw-cell <%= cell_class(cell) %> <%= 'draw-cell--highlight' if filters[:points] == pts %>">
                     <% if cell && cell[:applicants] && cell[:applicants] > 0 %>
                         <div class="draw-cell__odds"><%= display_odds(cell) %></div>
                         <div class="draw-cell__ratio"><%= cell[:success] %>/<%= cell[:applicants] %></div>
@@ -53,7 +53,7 @@
             <% end %>
             <% (0..max_points).each do |pts| %>
                 <% cell = data[:nonresident][:pref][pts] %>
-                <td class="draw-cell <%= cell_class(cell) %>">
+                <td class="draw-cell <%= cell_class(cell) %> <%= 'draw-cell--highlight' if filters[:points] == pts %>">
                     <% if cell && cell[:applicants] && cell[:applicants] > 0 %>
                         <div class="draw-cell__odds"><%= display_odds(cell) %></div>
                         <div class="draw-cell__ratio"><%= cell[:success] %>/<%= cell[:applicants] %></div>

@@ -1,0 +1,29 @@
+<%# locals: f (form builder), field, label, options, selected, blank (placeholder option text, nil for none), disabled (optional) %>
+<% disabled = local_assigns.fetch(:disabled, false) %>
+<% pairs = options.map { |o| o.is_a?(Array) ? o : [o, o] } %>
+<% selected_text = pairs.find { |_, value| value.to_s == selected.to_s }&.first || blank %>
+
+<div class="form__field filter-field" data-controller="filter-field">
+    <div class="filter-field__summary">
+        <div class="filter-field__text">
+            <span class="filter-field__label"><%= label %></span>
+            <span class="filter-field__value" data-filter-field-target="value"><%= selected_text %></span>
+        </div>
+        <button type="button" class="filter-field__edit"
+            data-action="filter-field#toggle"
+            data-filter-field-target="button"
+            aria-expanded="false"
+            <%= "disabled" if disabled %>>Edit</button>
+    </div>
+
+    <div class="filter-field__input" data-filter-field-target="input" hidden>
+        <%= f.select field,
+            options_for_select(pairs, selected.to_s),
+            { include_blank: blank },
+            { disabled: disabled,
+              "aria-label": label,
+              data: { reflex: "change->Dashboard#filter",
+                      action: "change->filter-field#changed",
+                      filter_field_target: "select" } } %>
+    </div>
+</div>
