@@ -20,7 +20,10 @@ class Profile < ApplicationRecord
 
   belongs_to :user
   has_many :preference_points, dependent: :destroy
-  accepts_nested_attributes_for :preference_points, reject_if: ->(attrs) { attrs["points"].blank? }
+  # New rows with blank points are ignored; existing rows with blank points are
+  # turned into _destroy by ProfilesController#profile_params.
+  accepts_nested_attributes_for :preference_points, allow_destroy: true,
+    reject_if: ->(attrs) { attrs["id"].blank? && attrs["points"].blank? }
 
   before_validation :normalize
 

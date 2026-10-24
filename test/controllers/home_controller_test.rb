@@ -35,7 +35,8 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   test "signed-in nav links to home, dashboard and features" do
     sign_in users(:alice)
     get root_url
-    assert_select "a[href=?]", dashboard_path
-    assert_select "a[href=?]", features_path
+    assert_select "nav.navbar a[href=?]", root_path
+    assert_select "nav.navbar a[href=?]", dashboard_path
+    assert_select "nav.navbar a[href=?]", features_path
   end
 end

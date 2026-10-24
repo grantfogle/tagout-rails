@@ -18,6 +18,8 @@ class ProfilesController < ApplicationController
       build_missing_points
       render :new, status: :unprocessable_entity
     end
+  rescue ActiveRecord::RecordNotUnique
+    redirect_to edit_profile_path
   end
 
   def edit
@@ -53,6 +55,18 @@ class ProfilesController < ApplicationController
   end
 
   def profile_params
+    permitted = permitted_profile_params
+    attrs = permitted[:preference_points_attributes]
+    if attrs
+      rows = attrs.respond_to?(:values) ? attrs.values : attrs
+      # An existing row with blank/missing points (cleared, or its species was
+      # unchecked and the inputs disabled) means "remove the saved points".
+      rows.each { |row| row[:_destroy] = "1" if row[:id].present? && row[:points].blank? }
+    end
+    permitted
+  end
+
+  def permitted_profile_params
     params.require(:profile).permit(
       :name, :residency_state, :notifications_enabled,
       favorite_species: [], states_of_interest: [], preferred_methods: [],

@@ -1,5 +1,5 @@
 require "test_helper"
-
+require "minitest/mock"
 class ProfilesControllerTest < ActionDispatch::IntegrationTest
   def valid_params
     {
@@ -112,5 +112,74 @@ class ProfilesControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_equal 9, other.preference_points.first.reload.points
+  end
+
+  def profile_with_points
+    Profile.create!(user: users(:alice), name: "Alice", preference_points_attributes: [
+      { species: "Elk", points: "3" }, { species: "Deer", points: "2" }
+    ])
+  end
+
+  test "update destroys an existing point whose value is blanked" do
+    profile = profile_with_points
+    elk = profile.preference_points.find_by(species: "Elk")
+    sign_in users(:alice)
+    assert_difference("PreferencePoint.count", -1) do
+      patch profile_url, params: { profile: { preference_points_attributes: {
+        "0" => { id: elk.id, species: "Elk", points: "" }
+      } } }
+    end
+    assert_redirected_to root_url
+    assert_nil PreferencePoint.find_by(id: elk.id)
+  end
+
+  test "update destroys an id-only row (unchecked species)" do
+    profile = profile_with_points
+    deer = profile.preference_points.find_by(species: "Deer")
+    sign_in users(:alice)
+    assert_difference("PreferencePoint.count", -1) do
+      patch profile_url, params: { profile: { preference_points_attributes: { "0" => { id: deer.id } } } }
+    end
+    assert_nil PreferencePoint.find_by(id: deer.id)
+  end
+
+  test "update still ignores a new row with blank points" do
+    Profile.create!(user: users(:alice), name: "Alice")
+    sign_in users(:alice)
+    assert_no_difference("PreferencePoint.count") do
+      patch profile_url, params: { profile: { preference_points_attributes: {
+        "0" => { species: "Elk", points: "" }
+      } } }
+    end
+    assert_redirected_to root_url
+  end
+
+  test "update applies other rows alongside a destroyed one" do
+    profile = profile_with_points
+    elk = profile.preference_points.find_by(species: "Elk")
+    deer = profile.preference_points.find_by(species: "Deer")
+    sign_in users(:alice)
+    patch profile_url, params: { profile: { preference_points_attributes: {
+      "0" => { id: elk.id, points: "" },
+      "1" => { id: deer.id, species: "Deer", points: "7" },
+      "2" => { species: "Pronghorn", points: "1" }
+    } } }
+    assert_nil PreferencePoint.find_by(id: elk.id)
+    assert_equal 7, deer.reload.points
+    assert_equal 1, profile.reload.points_for("Pronghorn")
+  end
+
+  test "create redirects to edit when a concurrent create wins the race" do
+    sign_in users(:alice)
+    real_new = Profile.method(:new)
+    racing_new = lambda do |*args|
+      real_new.call(*args).tap do |profile|
+        profile.define_singleton_method(:save) { |*| raise ActiveRecord::RecordNotUnique, "duplicate" }
+      end
+    end
+    Profile.stub(:new, racing_new) do
+      post profile_url, params: valid_params
+    end
+    assert_redirected_to edit_profile_url
   end
 end
