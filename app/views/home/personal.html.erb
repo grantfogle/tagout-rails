@@ -39,6 +39,18 @@
   </section>
 
   <section class="home__section">
+    <h2 class="home__heading">Next 30 days</h2>
+    <% if @upcoming_events.empty? %>
+      <p class="home__empty">Nothing in the next 30 days.</p>
+    <% else %>
+      <ul class="calendar__list">
+        <%= render partial: "calendar/event", collection: @upcoming_events, as: :event %>
+      </ul>
+    <% end %>
+    <p><%= link_to "View full year →", calendar_path %></p>
+  </section>
+
+  <section class="home__section">
     <h2 class="home__heading">Quick links</h2>
     <div class="home__links">
       <%= link_to "Open dashboard", dashboard_path, class: "button button--primary" %>

@@ -1,0 +1,18 @@
+<%# app/views/calendar/_event.html.erb %>
+<li class="calendar-event calendar-event--<%= event.kind %>">
+  <span class="calendar-event__date"><%= event_date_label(event) %></span>
+  <div class="calendar-event__body">
+    <strong class="calendar-event__title"><%= event.title %></strong>
+    <span class="calendar-event__meta"><%= [event_kind_label(event), event.species].compact.join(" · ") %></span>
+    <% if event.notes.present? %>
+      <p class="calendar-event__notes"><%= event.notes %></p>
+    <% end %>
+  </div>
+  <% if event.user_id.present? && event.user_id == current_user.id %>
+    <div class="calendar-event__actions">
+      <%= link_to "Edit", edit_calendar_event_path(event), class: "calendar-event__action" %>
+      <%= button_to "Delete", calendar_event_path(event), method: :delete,
+            class: "calendar-event__action", form_class: "calendar-event__delete" %>
+    </div>
+  <% end %>
+</li>

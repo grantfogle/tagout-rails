@@ -1,0 +1,98 @@
+// app/assets/stylesheets/components/_calendar.scss
+@import "../abstracts/variables";
+@import "../abstracts/typography";
+@import "../themes/default";
+
+.calendar {
+  padding: 2rem 1rem 4rem;
+  padding-left: unquote("max(1rem, calc((100% - 960px) / 2))");
+  padding-right: unquote("max(1rem, calc((100% - 960px) / 2))");
+  background: $bg-page;
+}
+
+.calendar__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.calendar__filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.calendar__month {
+  margin-top: 2rem;
+}
+
+.calendar__month-title {
+  margin-bottom: 0.75rem;
+}
+
+.calendar__empty,
+.home__empty {
+  color: $text-secondary;
+}
+
+.calendar__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.calendar-event {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.calendar-event__date {
+  flex: 0 0 8rem;
+  font-weight: 600;
+}
+
+.calendar-event__body {
+  flex: 1 1 12rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.calendar-event__meta,
+.calendar-event__notes {
+  margin: 0;
+  color: $text-secondary;
+  font-size: 0.9rem;
+}
+
+.calendar-event__actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.calendar-event__delete {
+  display: inline;
+}
+
+.calendar-event__action {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+  font: inherit;
+}

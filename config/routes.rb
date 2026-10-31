@@ -11,9 +11,11 @@ Rails.application.routes.draw do
 
   get "/dashboard", to: "dashboard#index"
   get "/features", to: "features#index"
+  get "/calendar", to: "calendar#index"
 
   resource :profile, only: [:new, :create, :edit, :update]
   resources :hunt_stats, only: [:new, :create, :show]
   resources :feedbacks, only: [:create]
+  resources :calendar_events, only: [:new, :create, :edit, :update, :destroy]
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end
