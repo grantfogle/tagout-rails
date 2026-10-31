@@ -1,0 +1,16 @@
+# Public Colorado dates. These are starter entries: confirm every date against the
+# current CPW big game brochure before relying on them, then add season dates per
+# species (kind: season, species: Elk, starts_on/ends_on).
+events:
+  - title: Big game application deadline
+    kind: deadline
+    starts_on: 2027-04-06
+    notes: Verify against the CPW brochure.
+  - title: Big game draw results
+    kind: draw_results
+    starts_on: 2027-06-01
+    notes: Verify against the CPW brochure.
+  - title: Leftover license sale
+    kind: leftover
+    starts_on: 2027-08-04
+    notes: Verify against the CPW brochure.
