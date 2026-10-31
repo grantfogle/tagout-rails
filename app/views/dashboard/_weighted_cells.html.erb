@@ -1,0 +1,26 @@
+<%# Cells for one residency row of a weighted-draw species: under 3 points (actuals only), then each weighted level. %>
+<% under = pool && pool[:under_three] %>
+<% under_cell = under && { applicants: under[:applicants], odds: under[:actual] } %>
+<td class="draw-cell weighted-cell weighted-cell--under <%= cell_class(under_cell) %>">
+    <% if under && under[:applicants] > 0 %>
+        <div class="draw-cell__odds"><%= display_odds(under_cell) %></div>
+        <div class="draw-cell__actual"><span class="draw-cell__tag">actual</span> <%= under[:success] %>/<%= under[:applicants] %></div>
+    <% else %>
+        <span class="draw-cell__empty">—</span>
+    <% end %>
+</td>
+<% (0..max_weighted).each do |weighted| %>
+    <% level = pool && pool[:levels][weighted] %>
+    <% cell = level && { applicants: level[:applicants], odds: level[:projected] } %>
+    <% sparse = level && level[:sparse] %>
+    <%= content_tag :td,
+          class: ["draw-cell", "weighted-cell", cell_class(cell), ("weighted-cell--sparse" if sparse)],
+          title: ("Fewer than #{HuntStatsService::SMALL_SAMPLE} applicants, so treat these odds with caution" if sparse) do %>
+        <% if level && level[:applicants] > 0 %>
+            <div class="draw-cell__odds draw-cell__odds--projected"><%= display_odds(cell) %></div>
+            <div class="draw-cell__actual"><span class="draw-cell__tag">actual</span> <%= level[:success] %>/<%= level[:applicants] %></div>
+        <% else %>
+            <span class="draw-cell__empty">—</span>
+        <% end %>
+    <% end %>
+<% end %>

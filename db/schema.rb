@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_23_000000) do
+ActiveRecord::Schema.define(version: 2026_10_30_000000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -75,6 +75,20 @@ ActiveRecord::Schema.define(version: 2026_10_23_000000) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  create_table "weighted_stats", force: :cascade do |t|
+    t.string "hunt_code", null: false
+    t.boolean "resident", null: false
+    t.boolean "adult", default: true, null: false
+    t.integer "preference_points", null: false
+    t.integer "weighted_points", null: false
+    t.integer "applicants", default: 0, null: false
+    t.integer "success", default: 0, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["hunt_code", "resident", "adult", "preference_points", "weighted_points"], name: "index_weighted_stats_unique_key", unique: true
+    t.index ["hunt_code"], name: "index_weighted_stats_on_hunt_code"
   end
 
   add_foreign_key "preference_points", "profiles"

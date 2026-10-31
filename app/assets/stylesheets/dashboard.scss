@@ -603,6 +603,85 @@ $results-header-height: 3.25rem;
     border-right: 2px solid color(orange, 200);
 }
 
+// Weighted-draw species: projected odds large, what actually happened small beneath
+.weighted-cell {
+    min-width: 64px;
+
+    .draw-cell__odds--projected {
+        font-size: 1.125rem;
+    }
+
+    .draw-cell__actual {
+        margin-top: 2px;
+        font-size: 0.625rem;
+        color: $text-secondary;
+    }
+
+    .draw-cell__tag {
+        padding: 0 3px;
+        border-radius: 3px;
+        background: color(grey, 100);
+        color: color(grey, 500);
+        font-size: 0.5625rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    // Under 3 points: actuals only, set apart from the weighted columns
+    &--under {
+        border-right: 2px solid color(grey, 300);
+    }
+}
+
+.results-table .weighted-group-row th {
+    padding: 0.35rem 0.5rem;
+    border-bottom: 0;
+    background: color(grey, 100);
+    color: $text-secondary;
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    text-align: center;
+}
+
+.weighted-badge {
+    display: inline-block;
+    margin-left: 4px;
+    padding: 0 4px;
+    border-radius: 3px;
+    background: $color-primary;
+    color: #fff;
+    font-size: 0.5625rem;
+    font-weight: 700;
+    vertical-align: middle;
+}
+
+.weighted-hint {
+    margin: 0 0 0.5rem;
+    font-size: 0.8125rem;
+    color: $text-secondary;
+}
+
+.weighted-note {
+    margin: 0 0 0.75rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid color(grey, 200);
+    border-radius: 0.5rem;
+    background: $bg-surface;
+    font-size: 0.8125rem;
+    color: $text-secondary;
+
+    p {
+        margin: 0.25rem 0 0;
+    }
+
+    &__title {
+        margin: 0;
+        font-size: 0.9375rem;
+        color: $text-primary;
+    }
+}
+
 // Results summary
 .results-summary {
     // Footer bar pinned to the bottom of the screen

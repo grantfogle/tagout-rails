@@ -41,3 +41,37 @@ end
 seed_hunt_stats("co_elk_stats.json")
 seed_hunt_stats("co_deer_stats.json")
 seed_hunt_stats("co_pronghorn_stats.json")
+seed_hunt_stats("co_bear_stats.json")
+seed_hunt_stats("co_desert_bighorn_stats.json")
+seed_hunt_stats("co_rocky_mountain_bighorn_stats.json")
+seed_hunt_stats("co_mountain_goat_stats.json")
+seed_hunt_stats("co_moose_stats.json")
+
+def seed_weighted_stats(filename)
+  rows = JSON.parse(File.read(Rails.root.join("db/seeds/#{filename}")))
+  now = Time.current
+
+  rows.each_slice(5_000) do |slice|
+    payload = slice.map do |r|
+      {
+        hunt_code:         r["hunt_code"],
+        resident:          r["resident"],
+        adult:             r["adult"],
+        preference_points: r["preference_points"].to_i,
+        weighted_points:   r["weighted_points"].to_i,
+        applicants:        r["applicants"].to_i,
+        success:           r["success"].to_i,
+        created_at:        now,
+        updated_at:        now
+      }
+    end
+
+    WeightedStat.upsert_all(payload, unique_by: "index_weighted_stats_unique_key")
+  end
+
+  puts "Seeded #{rows.size} weighted records from #{filename}"
+end
+
+seed_weighted_stats("co_rocky_mountain_bighorn_weighted.json")
+seed_weighted_stats("co_mountain_goat_weighted.json")
+seed_weighted_stats("co_moose_weighted.json")

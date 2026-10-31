@@ -1,6 +1,8 @@
 class HuntStatsService
   DEFAULT_LIMIT_PER_CODE = 50
   DEFAULT_PAGE_SIZE = 20
+  WEIGHTED_ELIGIBLE_POINTS = 3  # preference points needed to enter a weighted draw
+  SMALL_SAMPLE = 10             # fewer applicants than this makes a level's odds unreliable
 
   def initialize(scope: HuntStat.all)
     @scope = scope
@@ -66,6 +68,22 @@ class HuntStatsService
     }
   end
 
+  # Weighted-draw detail for the given hunt codes:
+  # { "SMS01O1R" => { resident: { under_three: {...}, levels: { weighted_points => {...} } }, nonresident: {...} } }
+  # Applicants with fewer than 3 preference points are one actuals-only cell. Everyone
+  # else is split by weighted level, each with actual results and projected odds (see
+  # WeightedOdds) computed from that pool and the licenses actually awarded.
+  def weighted_results(hunt_codes)
+    WeightedStat.where(hunt_code: hunt_codes, adult: true).group_by(&:hunt_code).transform_values do |rows|
+      { resident: weighted_pool(rows.select(&:resident)), nonresident: weighted_pool(rows.reject(&:resident)) }
+    end
+  end
+
+  # Widest weighted level for a species, so table columns stay consistent across pages.
+  def max_weighted_points(species)
+    WeightedStat.where(hunt_code: @scope.where(species: species).select(:hunt_code)).maximum(:weighted_points) || 0
+  end
+
   # Legacy method for backwards compatibility
   def grouped_draw_results(limit_per_code: DEFAULT_LIMIT_PER_CODE, filters: {})
     q = apply_filters(@scope, filters)
@@ -92,6 +110,29 @@ class HuntStatsService
   end
 
   private
+
+  def weighted_pool(rows)
+    eligible, under = rows.partition { |r| r.preference_points >= WEIGHTED_ELIGIBLE_POINTS }
+    applicants = eligible.group_by(&:weighted_points).transform_values { |rs| rs.sum(&:applicants) }
+    projected = WeightedOdds.new(applicants, eligible.sum(&:success)).odds
+
+    levels = eligible.group_by(&:weighted_points).to_h do |weighted, rs|
+      n = rs.sum(&:applicants)
+      won = rs.sum(&:success)
+      [weighted, {
+        applicants: n,
+        success: won,
+        actual: n > 0 ? (won.to_f / n * 100).round(1) : nil,
+        projected: projected[weighted] && (projected[weighted] * 100).round(1),
+        sparse: n < SMALL_SAMPLE
+      }]
+    end
+
+    n = under.sum(&:applicants)
+    won = under.sum(&:success)
+    { under_three: { applicants: n, success: won, actual: n > 0 ? (won.to_f / n * 100).round(1) : nil, projected: nil },
+      levels: levels.sort.to_h }
+  end
 
   def build_residency_data(pref_records, choice_records)
     pref_data = {}

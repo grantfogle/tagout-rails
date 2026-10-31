@@ -31,7 +31,7 @@ class ProfileTest < ActiveSupport::TestCase
   end
 
   test "rejects unknown species, methods and states of interest" do
-    assert_not build_profile(favorite_species: ["Moose"]).valid?
+    assert_not build_profile(favorite_species: ["Bison"]).valid?
     assert_not build_profile(preferred_methods: ["Crossbow"]).valid?
     assert_not build_profile(states_of_interest: ["ZZ"]).valid?
   end

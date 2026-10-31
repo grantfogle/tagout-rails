@@ -18,7 +18,7 @@ class PreferencePointTest < ActiveSupport::TestCase
   end
 
   test "species must be a known species" do
-    assert_not @profile.preference_points.build(species: "Moose", points: 1).valid?
+    assert_not @profile.preference_points.build(species: "Bison", points: 1).valid?
   end
 
   test "one row per species per profile" do
