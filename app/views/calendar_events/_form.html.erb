@@ -1,0 +1,40 @@
+<%# app/views/calendar_events/_form.html.erb %>
+<%= form_with model: event, local: true, class: "form" do |f| %>
+  <% if event.errors.any? %>
+    <div class="alert alert--error">
+      <ul>
+        <% event.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form__field">
+    <%= f.label :title, "Title" %>
+    <%= f.text_field :title, required: true %>
+  </div>
+
+  <div class="form__field">
+    <%= f.label :starts_on, "Date" %>
+    <%= f.date_field :starts_on, required: true %>
+  </div>
+
+  <div class="form__field">
+    <%= f.label :ends_on, "End date (optional)" %>
+    <%= f.date_field :ends_on %>
+  </div>
+
+  <div class="form__field">
+    <%= f.label :species, "Species (optional)" %>
+    <%= f.select :species, HuntStat::SPECIES_OPTIONS, include_blank: "Any species" %>
+  </div>
+
+  <div class="form__field">
+    <%= f.label :notes, "Notes (optional)" %>
+    <%= f.text_area :notes, rows: 3 %>
+  </div>
+
+  <%= f.submit class: "button button--primary" %>
+  <%= link_to "Cancel", calendar_path, class: "button button--secondary" %>
+<% end %>
