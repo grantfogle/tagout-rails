@@ -64,4 +64,24 @@ class CalendarServiceTest < ActiveSupport::TestCase
     titles = CalendarService.new(users(:alice)).year(mine_only: true).values.flatten.map(&:title)
     assert_equal %w[mine], titles
   end
+
+  test "own reminders show regardless of the species filter" do
+    Profile.create!(user: users(:bob), name: "Bob", favorite_species: %w[Elk])
+    reminder_event = CalendarEvent.create!(title: "my deer", kind: "reminder", state: "CO",
+                                           starts_on: Date.new(2026, 11, 5), species: "Deer", user: users(:bob))
+    event("public deer", Date.new(2026, 11, 6), species: "Deer")
+    service = CalendarService.new(users(:bob))
+
+    assert_equal ["my deer"], service.upcoming.map(&:title)
+    assert_includes service.year.values.flatten, reminder_event
+    assert_equal ["my deer"], service.year(mine_only: true).values.flatten.map(&:title)
+  end
+
+  test "another user's species reminder stays hidden" do
+    CalendarEvent.create!(title: "bob deer", kind: "reminder", state: "CO",
+                          starts_on: Date.new(2026, 11, 5), species: "Deer", user: users(:bob))
+
+    assert_equal [], CalendarService.new(users(:alice)).upcoming.map(&:title)
+    assert_equal [], CalendarService.new(users(:alice)).year.values.flatten
+  end
 end

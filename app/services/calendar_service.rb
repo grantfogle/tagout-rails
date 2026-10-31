@@ -25,7 +25,8 @@ class CalendarService
   private
 
   def scoped(explicit_species)
-    CalendarEvent.visible_to(@user).for_species(species_list(explicit_species))
+    base = CalendarEvent.visible_to(@user)
+    base.for_species(species_list(explicit_species)).or(base.where(user_id: @user.id))
   end
 
   def species_list(explicit)

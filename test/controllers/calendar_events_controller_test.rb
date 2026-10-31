@@ -81,10 +81,12 @@ class CalendarEventsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "own reminders show edit and delete controls on the calendar page" do
-    event = reminder_for(users(:alice))
-    sign_in users(:alice)
-    get calendar_url
-    assert_select "a[href=?]", edit_calendar_event_path(event)
-    assert_select "form[action=?]", calendar_event_path(event)
+    travel_to Time.zone.local(2026, 10, 31, 12) do
+      event = reminder_for(users(:alice))
+      sign_in users(:alice)
+      get calendar_url
+      assert_select "a[href=?]", edit_calendar_event_path(event)
+      assert_select "form[action=?]", calendar_event_path(event)
+    end
   end
 end
