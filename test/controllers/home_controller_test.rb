@@ -37,6 +37,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get root_url
     assert_select "nav.navbar a[href=?]", root_path
     assert_select "nav.navbar a[href=?]", dashboard_path
+    assert_select "nav.navbar a[href=?]", calendar_path
     assert_select "nav.navbar a[href=?]", features_path
   end
 
