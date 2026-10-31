@@ -10,10 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_10_30_000000) do
+ActiveRecord::Schema.define(version: 2026_10_31_000000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "calendar_events", force: :cascade do |t|
+    t.string "title", null: false
+    t.string "kind", null: false
+    t.string "state", default: "CO", null: false
+    t.string "species"
+    t.date "starts_on", null: false
+    t.date "ends_on"
+    t.bigint "user_id"
+    t.text "notes"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["starts_on"], name: "index_calendar_events_on_starts_on"
+    t.index ["user_id"], name: "index_calendar_events_on_user_id"
+  end
 
   create_table "feedbacks", force: :cascade do |t|
     t.string "email"
@@ -91,6 +106,7 @@ ActiveRecord::Schema.define(version: 2026_10_30_000000) do
     t.index ["hunt_code"], name: "index_weighted_stats_on_hunt_code"
   end
 
+  add_foreign_key "calendar_events", "users"
   add_foreign_key "preference_points", "profiles"
   add_foreign_key "profiles", "users"
 end
