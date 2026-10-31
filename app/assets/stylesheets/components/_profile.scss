@@ -1,0 +1,87 @@
+@import "../abstracts/variables";
+@import "../abstracts/typography";
+@import "../themes/default";
+
+.profile {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+
+.profile__subtitle {
+  color: $text-secondary;
+}
+
+.profile-form {
+  [hidden] {
+    display: none !important;
+  }
+
+  &__group {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  &__hint {
+    margin: 0;
+    color: $text-secondary;
+    font-size: 0.875rem;
+  }
+
+  // One row of points inputs; wraps on narrow screens. `.form__field` is
+  // width: 100%, so reset it or every input would wrap onto its own line.
+  &__points {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    width: 100%;
+
+    > .form__field {
+      flex: 1 1 140px;
+      width: auto;
+      min-width: 0;
+    }
+  }
+
+  &__actions {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+}
+
+.form__check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-right: 1rem;
+  cursor: pointer;
+
+  // `.form__field input` sizes every input like a text field (100% wide, 42px
+  // tall, appearance: none), which leaves checkboxes as empty stretched boxes.
+  // Draw a small custom box with its own check icon instead.
+  input[type="checkbox"] {
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    padding: 0;
+    border: 1.5px solid #9ca3af;
+    border-radius: 0.3rem;
+    background-color: #ffffff;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 0.8rem;
+    cursor: pointer;
+
+    &:checked {
+      border-color: $color-primary;
+      background-color: $color-primary;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+    }
+  }
+}

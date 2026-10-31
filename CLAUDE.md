@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Tagout is a Rails 6.1 app (Ruby 3.1.3, Node per `.node-version`, Yarn 1) that shows Colorado big-game draw statistics (Elk, Deer, Pronghorn) by hunt code: preference points, choice draws, applicants, success and odds. Uses Postgres, Devise auth, Webpacker 5 (webpack 4), Turbolinks, Stimulus and StimulusReflex/CableReady.
+Tagout is a Rails 6.1 app (Ruby 3.1.3, Node per `.node-version`, Yarn 1) that shows Colorado big-game draw statistics (Elk, Deer, Pronghorn, Bear) by hunt code: preference points, choice draws, applicants, success and odds. Uses Postgres, Devise auth, Webpacker 5 (webpack 4), Turbolinks, Stimulus and StimulusReflex/CableReady.
 
 ## Commands
 
@@ -22,9 +22,12 @@ bin/rails test test/models/user_test.rb:12  # single test by line
 
 ## Architecture
 
-- **Routes** (`config/routes.rb`): root is `dashboard#index` for signed-in users and `home#index` otherwise (Devise `authenticated`/`unauthenticated` roots). `hunt_stats` routes are declared but there is no `HuntStatsController` yet. `feedbacks#create` stores `Feedback` records.
+- **Routes** (`config/routes.rb`): root is `home#index` for everyone (Devise `authenticated`/`unauthenticated` roots); `HomeController` renders `home/personal` (greeting, profile, per-species dashboard links) for signed-in users and the marketing `home/index` otherwise. `/features` (public) lists current vs. future features. `resource :profile` (new/create/edit/update) is the skippable onboarding form; users without a profile see a "Finish your profile" banner and are never redirected. `hunt_stats` routes are declared but there is no `HuntStatsController` yet. `feedbacks#create` stores `Feedback` records.
+- **Profile**: `User has_one :profile` (name, `residency_state`, derived `resident`, `favorite_species`, `states_of_interest`, `preferred_methods`, `notifications_enabled`) and `Profile has_many :preference_points` (species + 0–99 points). Species/methods validate against `HuntStat` constants.
 - **Dashboard flow**: `DashboardController#index` (requires login) whitelists filter params, casts `resident`/`adult` to booleans, and calls `HuntStatsService#draw_results_by_code`. It responds to both `html` and `js` (`index.js.erb` + `_table_rows.html.erb`) for paginated "load more" appends.
 - **`HuntStatsService`** (`app/services/`) holds all query/aggregation logic: filters, pagination by distinct `hunt_code`, and building per-code hashes split into `resident`/`nonresident` with `pref` (by points) and `choice` (2nd–4th choice; 1st choice is skipped) data. `grouped_draw_results` is legacy. `global_max_points` is computed across all filtered data so table columns stay consistent across pages.
+- **Weighted draw**: Moose, Mountain Goat and Rocky Mountain Bighorn (`HuntStat::WEIGHTED_SPECIES`) need 3 preference points to be eligible, then weighted points improve the draw number (score ÷ (weighted + 1)). `hunt_stats` holds these species summed per preference level; `WeightedStat` keeps each weighted level (`weighted_stats` table). `WeightedOdds` projects next-year odds from a pool and its licenses awarded, and `HuntStatsService#weighted_results` builds the dashboard cells. Filtering the dashboard to one of these species switches to weighted columns (projected odds large, actual results small); Desert Bighorn is a plain random draw with no points.
+- **Seeding draw data**: `script/parse_draw_report.py` turns a CPW post-draw recap PDF (`pdftotext -layout`) into `db/seeds/co_*_stats.json` (plus a weighted file for weighted species) and checks every hunt code's rows against the report's own totals. `db/seeds/*` is gitignored.
 - **`HuntStat` model**: one row per (hunt_code, draw_type, value, resident, adult). `draw_type` is `"pref"` or `"total_choice"`; `value` is points or choice number. Allowed species/sex/method/season values are constants on the model and also drive the filter dropdowns.
 - **StimulusReflex**: reflexes live in `app/reflexes/` (only `ApplicationReflex` so far); client config is in `app/javascript/config/` and Stimulus controllers in `app/javascript/controllers/`. Entry pack is `app/javascript/packs/application.js`.
 - Several `*.rb.bak` files in `app/` are leftovers from the StimulusReflex install; ignore them.

@@ -1,9 +1,33 @@
 <div class="dashboard-layout">
 <div class="dashboard">
     <% if @draw_results.any? %>
+        <% if @weighted_view %>
+            <aside class="weighted-note">
+                <h2 class="weighted-note__title">Weighted draw odds &middot; <%= @filters[:species] %></h2>
+                <p>
+                    You need <%= HuntStatsService::WEIGHTED_ELIGIBLE_POINTS %> preference points to be eligible. Weighted points
+                    start building in your 4th year of applying. Each applicant gets a random draw number, divided by
+                    (weighted points + 1), and the lowest numbers win, so more weighted points means better odds.
+                </p>
+                <p class="weighted-note__legend">
+                    <strong>Large number:</strong> projected odds for next year, estimated from the 2026 applicant pool and licenses.
+                    <strong>Small number:</strong> what actually happened in the 2026 draw.
+                    Hover a cell with fewer than <%= HuntStatsService::SMALL_SAMPLE %> applicants for a caution.
+                </p>
+            </aside>
+        <% end %>
+        <% if @weighted_codes.present? %>
+            <p class="weighted-hint"><span class="weighted-badge">W</span> marks a weighted draw. Filter by Moose, Mountain Goat or Rocky Mountain Bighorn to see weighted draw odds.</p>
+        <% end %>
         <div class="results-table-container">
             <table class="results-table consolidated-table">
                 <thead>
+                    <% if @weighted_view %>
+                        <tr class="weighted-group-row">
+                            <th colspan="6"></th>
+                            <th colspan="<%= @max_weighted + 2 %>">Weighted draw odds, by weighted points (3+ preference points)</th>
+                        </tr>
+                    <% end %>
                     <tr>
                         <th class="sticky-col sticky-col--code">Hunt Code</th>
                         <th class="sticky-col sticky-col--unit">Unit</th>
@@ -11,13 +35,20 @@
                         <th class="choice-header">4th</th>
                         <th class="choice-header">3rd</th>
                         <th class="choice-header">2nd</th>
-                        <% (0..@max_points).each do |pts| %>
-                            <th class="point-header <%= 'point-header--highlight' if @filters[:points] == pts %>"><%= pts %></th>
+                        <% if @weighted_view %>
+                            <th class="point-header point-header--under">Under 3 pts</th>
+                            <% (0..@max_weighted).each do |weighted| %>
+                                <th class="point-header"><%= weighted %></th>
+                            <% end %>
+                        <% else %>
+                            <% (0..@max_points).each do |pts| %>
+                                <th class="point-header <%= 'point-header--highlight' if @filters[:points] == pts %>"><%= pts %></th>
+                            <% end %>
                         <% end %>
                     </tr>
                 </thead>
                 <tbody id="draw-results">
-                    <%= render partial: 'table_rows', locals: { draw_results: @draw_results, filters: @filters, max_points: @max_points } %>
+                    <%= render partial: 'table_rows', locals: { draw_results: @draw_results, filters: @filters, max_points: @max_points, weighted: @weighted, max_weighted: @max_weighted, weighted_codes: @weighted_codes } %>
                 </tbody>
             </table>
             <% if @has_more %>

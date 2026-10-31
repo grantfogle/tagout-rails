@@ -2,7 +2,7 @@
     <%# Resident Row - show if no filter or resident filter %>
     <% if filters[:resident].nil? || filters[:resident] == true %>
         <tr class="resident-row" data-hunt-code="<%= hunt_code %>">
-            <td class="sticky-col sticky-col--code"><%= hunt_code %></td>
+            <td class="sticky-col sticky-col--code"><%= hunt_code %><%= render "weighted_badge" if local_assigns[:weighted_codes]&.include?(hunt_code) %></td>
             <td class="sticky-col sticky-col--unit"><%= data[:unit] %></td>
             <td class="sticky-col sticky-col--status">
                 <span class="status-badge status-badge--resident">R</span>
@@ -18,16 +18,20 @@
                     <% end %>
                 </td>
             <% end %>
-            <% (0..max_points).each do |pts| %>
-                <% cell = data[:resident][:pref][pts] %>
-                <td class="draw-cell <%= cell_class(cell) %> <%= 'draw-cell--highlight' if filters[:points] == pts %>">
-                    <% if cell && cell[:applicants] && cell[:applicants] > 0 %>
-                        <div class="draw-cell__odds"><%= display_odds(cell) %></div>
-                        <div class="draw-cell__ratio"><%= cell[:success] %>/<%= cell[:applicants] %></div>
-                    <% else %>
-                        <span class="draw-cell__empty">—</span>
-                    <% end %>
-                </td>
+            <% if local_assigns[:weighted] %>
+                <%= render "weighted_cells", pool: weighted[hunt_code]&.dig(:resident), max_weighted: max_weighted %>
+            <% else %>
+                <% (0..max_points).each do |pts| %>
+                    <% cell = data[:resident][:pref][pts] %>
+                    <td class="draw-cell <%= cell_class(cell) %> <%= 'draw-cell--highlight' if filters[:points] == pts %>">
+                        <% if cell && cell[:applicants] && cell[:applicants] > 0 %>
+                            <div class="draw-cell__odds"><%= display_odds(cell) %></div>
+                            <div class="draw-cell__ratio"><%= cell[:success] %>/<%= cell[:applicants] %></div>
+                        <% else %>
+                            <span class="draw-cell__empty">—</span>
+                        <% end %>
+                    </td>
+            <% end %>
             <% end %>
         </tr>
     <% end %>
@@ -35,7 +39,7 @@
     <%# Non-Resident Row - show if no filter or non-resident filter %>
     <% if filters[:resident].nil? || filters[:resident] == false %>
         <tr class="nonresident-row" data-hunt-code="<%= hunt_code %>">
-            <td class="sticky-col sticky-col--code"><%= hunt_code %></td>
+            <td class="sticky-col sticky-col--code"><%= hunt_code %><%= render "weighted_badge" if local_assigns[:weighted_codes]&.include?(hunt_code) %></td>
             <td class="sticky-col sticky-col--unit"><%= data[:unit] %></td>
             <td class="sticky-col sticky-col--status">
                 <span class="status-badge status-badge--nonresident">NR</span>
@@ -51,16 +55,20 @@
                     <% end %>
                 </td>
             <% end %>
-            <% (0..max_points).each do |pts| %>
-                <% cell = data[:nonresident][:pref][pts] %>
-                <td class="draw-cell <%= cell_class(cell) %> <%= 'draw-cell--highlight' if filters[:points] == pts %>">
-                    <% if cell && cell[:applicants] && cell[:applicants] > 0 %>
-                        <div class="draw-cell__odds"><%= display_odds(cell) %></div>
-                        <div class="draw-cell__ratio"><%= cell[:success] %>/<%= cell[:applicants] %></div>
-                    <% else %>
-                        <span class="draw-cell__empty">—</span>
-                    <% end %>
-                </td>
+            <% if local_assigns[:weighted] %>
+                <%= render "weighted_cells", pool: weighted[hunt_code]&.dig(:nonresident), max_weighted: max_weighted %>
+            <% else %>
+                <% (0..max_points).each do |pts| %>
+                    <% cell = data[:nonresident][:pref][pts] %>
+                    <td class="draw-cell <%= cell_class(cell) %> <%= 'draw-cell--highlight' if filters[:points] == pts %>">
+                        <% if cell && cell[:applicants] && cell[:applicants] > 0 %>
+                            <div class="draw-cell__odds"><%= display_odds(cell) %></div>
+                            <div class="draw-cell__ratio"><%= cell[:success] %>/<%= cell[:applicants] %></div>
+                        <% else %>
+                            <span class="draw-cell__empty">—</span>
+                        <% end %>
+                    </td>
+            <% end %>
             <% end %>
         </tr>
     <% end %>
