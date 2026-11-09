@@ -24,8 +24,9 @@ Rails.application.configure do
   # Apache or NGINX already handles this.
   config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
 
-  # Compress CSS using a preprocessor.
-  # config.assets.css_compressor = :sass
+  # sassc-rails defaults this to :sass, which re-parses the compiled CSS as Sass and
+  # chokes on the raw max(1rem, calc(...)) in home/calendar padding. Skip it.
+  config.assets.css_compressor = nil
 
   # Do not fallback to assets pipeline if a precompiled asset is missed.
   config.assets.compile = false

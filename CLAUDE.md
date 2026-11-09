@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Tagout is a Rails 6.1 app (Ruby 3.1.3, Node per `.node-version`, Yarn 1) that shows Colorado big-game draw statistics (Elk, Deer, Pronghorn, Bear) by hunt code: preference points, choice draws, applicants, success and odds. Uses Postgres, Devise auth, Webpacker 5 (webpack 4), Turbolinks, Stimulus and StimulusReflex/CableReady.
+Tagout is a Rails 6.1 app (Ruby 3.3.6, Node per `.node-version`, Yarn 1) that shows Colorado big-game draw statistics (Elk, Deer, Pronghorn, Bear) by hunt code: preference points, choice draws, applicants, success and odds. Uses Postgres, Devise auth, Webpacker 5 (webpack 4), Turbolinks, Stimulus and StimulusReflex/CableReady.
 
 ## Commands
 
