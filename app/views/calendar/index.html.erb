@@ -1,0 +1,32 @@
+<%# app/views/calendar/index.html.erb %>
+<div class="calendar">
+  <header class="calendar__header">
+    <h1 class="calendar__title">Your year ahead</h1>
+    <%= link_to "Add reminder", new_calendar_event_path, class: "button button--primary" %>
+  </header>
+
+  <%= form_tag calendar_path, method: :get, class: "form calendar__filters" do %>
+    <div class="form__field">
+      <%= label_tag :species, "Species" %>
+      <%= select_tag :species, options_for_select(HuntStat::SPECIES_OPTIONS, @species),
+            include_blank: "All my species" %>
+    </div>
+    <label class="form__check">
+      <%= check_box_tag :mine, "1", @mine_only %> Mine only
+    </label>
+    <%= submit_tag "Filter", name: nil, class: "button button--secondary" %>
+  <% end %>
+
+  <% @months.each do |month, events| %>
+    <section class="calendar__month">
+      <h2 class="calendar__month-title"><%= month.strftime("%B %Y") %></h2>
+      <% if events.empty? %>
+        <p class="calendar__empty">No events.</p>
+      <% else %>
+        <ul class="calendar__list">
+          <%= render partial: "calendar/event", collection: events, as: :event %>
+        </ul>
+      <% end %>
+    </section>
+  <% end %>
+</div>

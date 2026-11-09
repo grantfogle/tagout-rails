@@ -9,6 +9,7 @@
       <% if user_signed_in? %>
         <li><%= link_to "Home", root_path, class: "navbar__link" %></li>
         <li><%= link_to "Dashboard", dashboard_path, class: "navbar__link" %></li>
+        <li><%= link_to "Calendar", calendar_path, class: "navbar__link" %></li>
         <li><%= link_to "Features", features_path, class: "navbar__link" %></li>
         <li>
           <%= link_to "Logout", destroy_user_session_path,

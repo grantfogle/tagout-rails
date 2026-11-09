@@ -4,6 +4,7 @@ class HomeController < ApplicationController
     return unless user_signed_in?
 
     @profile = current_user.profile
+    @upcoming_events = CalendarService.new(current_user).upcoming
     render :personal
   end
 end
